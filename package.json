@@ -1,0 +1,35 @@
+{
+  "name": "ncku-su-website",
+  "version": "1.0.0",
+  "description": "the website of 26th NCKU SU.",
+  "author": "nckusu@mail.ncku.edu.tw",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt build && nuxt start",
+    "precommit": "npm run lint",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore ."
+  },
+  "dependencies": {
+    "axios": "^0.16.2",
+    "cross-env": "^5.0.1",
+    "express": "^4.15.3",
+    "nuxt": "latest",
+    "prettier": "^1.12.1",
+    "source-map-support": "^0.4.15"
+  },
+  "devDependencies": {
+    "@nuxtjs/axios": "^5.3.1",
+    "@nuxtjs/proxy": "^1.2.4",
+    "babel-eslint": "^7.2.3",
+    "eslint": "^4.3.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-loader": "^1.9.0",
+    "eslint-plugin-html": "^3.1.1",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.1.1",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1"
+  }
+}
