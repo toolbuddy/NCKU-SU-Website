@@ -1,6 +1,5 @@
 <template>
-  <section class="container">
-  </section>
+  <h1> Index 首頁 </h1>
 </template>
 
 <script>
