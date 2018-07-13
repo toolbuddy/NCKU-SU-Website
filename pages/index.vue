@@ -1,7 +1,5 @@
 <template>
-  <section class="container">
-    <haha></haha>
-  </section>
+  <h1> Index 首頁 </h1>
 </template>
 
 <script>
@@ -10,7 +8,6 @@ import haha from '~/pages/haha.vue'
 
 export default {
   components: {
-    haha
   },
   async asyncData () {
     let { data } = await axios.get('/api/developers')
