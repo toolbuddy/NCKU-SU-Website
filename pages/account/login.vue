@@ -6,7 +6,7 @@
       <br/>
       <label> 密碼 password </label><input type="password"/>
       <br/>
-      <button type="submit"> 登入 Login </button>
+      <button type="submit" v-on:click="submit"> 登入 Login </button>
     </form>
   </div>
 </template>
