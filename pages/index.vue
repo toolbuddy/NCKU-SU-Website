@@ -4,7 +4,6 @@
 
 <script>
 import axios from '~/plugins/axios'
-import haha from '~/pages/haha.vue'
 
 export default {
   components: {
