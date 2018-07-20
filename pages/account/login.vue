@@ -18,6 +18,7 @@
   export default {
     methods: {
       submit: function () {
+        console.log('test')
         // login code here...
        const params = {
             username: document.getElementById('username').value,
