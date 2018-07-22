@@ -1,5 +1,5 @@
 <template>
-  <h1> All Post 全部公告 </h1>
+  <h1> Announcement 重要公告 </h1>
 </template>
 
 <script>
