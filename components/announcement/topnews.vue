@@ -1,11 +1,15 @@
 <template>
-  <h1> All Post 全部公告 </h1>
+  <div>
+    <h1> Top News Component 重要公告組件 </h1>
+  </div>
 </template>
 
 <script>
   export default {
+    
   }
 </script>
 
 <style scoped>
+
 </style>
