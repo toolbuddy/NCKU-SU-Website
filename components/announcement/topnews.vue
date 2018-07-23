@@ -1,5 +1,7 @@
 <template>
-  <h1> Important Component 重要公告組件 </h1>
+  <div>
+    <h1> Top News Component 重要公告組件 </h1>
+  </div>
 </template>
 
 <script>
