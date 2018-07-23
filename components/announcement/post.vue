@@ -1,11 +1,18 @@
 <template>
   <div>
-    <label> 標題 Title </label> <br/> <input type="text"/> <br/>
-    <label> 發布者： {{author}} </label> <br/>
-    <time> 發布時間：{{currentTime}} </time> <br/>
-    <label> 內容 Content </label> <br/> <textarea rows="8" cols="50"> </textarea> <br/>
-    <button type="button" v-on:click="post"> 發布 Post </button>
-    <button type="button"> 取消 Cancel </button>
+    <form>
+      <label> 標題 Title </label> <br/> <input type="text"/> <br/>
+      <label> 發布者： {{author}} </label> <br/>
+      <time> 發布時間：{{currentTime}} </time> <br/>
+      <select name="type">
+  　    <option value="topnews">重要公告</option>
+  　    <option value="message">文字快訊</option>
+      </select><br/>
+      <label> 內容 Content </label> <br/> <textarea rows="8" cols="50"> </textarea> <br/>
+      <button type="button" v-on:click="post"> 發布 Post </button>
+      <button type="button"> 取消 Cancel </button>
+    </form>
+    
   </div>
 </template>
 
