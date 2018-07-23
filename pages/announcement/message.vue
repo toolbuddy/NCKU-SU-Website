@@ -1,5 +1,5 @@
 <template>
-  <h1> Text 文字快訊 </h1>
+  <h1> Message 文字快訊 </h1>
 </template>
 
 <script>
