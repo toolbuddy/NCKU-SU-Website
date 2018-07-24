@@ -105,5 +105,16 @@
 </script>
 
 <style scoped>
-
+  .editor {
+    box-shadow: 0 0 2px #CCC;
+    min-height: 150px;
+    overflow: auto;
+    padding: 1em;
+    margin-top: 20px;
+    resize: vertical;
+    outline: none;
+  }
+  .toolbar {
+    text-align: center;
+  }
 </style>
