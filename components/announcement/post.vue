@@ -31,12 +31,12 @@
 
       <a href="#" data-command="h1"> H1 </a>
       <a href="#" data-command="h2"> H2 </a>
-      <a href="#" data-command="createlink"><i class="fa fa-link"> H2 </i></a>
-      <a href="#" data-command="unlink"><i class="fa fa-unlink"> H2 </i></a>
-      <a href="#" data-command="insertimage"><i class="fa fa-image"> H2 </i></a>
+      <a href="#" data-command="createlink"><i class="fa fa-link"> </i></a>
+      <a href="#" data-command="unlink"><i class="fa fa-unlink"> </i></a>
+      <a href="#" data-command="insertimage"><i class="fa fa-image"> </i></a>
       <a href="#" data-command="p"> P </a>
-      <a href="#" data-command="subscript"><i class="fa fa-subscript"> H2 </i></a>
-      <a href="#" data-command="superscript"><i class="fa fa-superscript"> H2 </i></a>
+      <a href="#" data-command="subscript"><i class="fa fa-subscript"> </i></a>
+      <a href="#" data-command="superscript"><i class="fa fa-superscript"> </i></a>
       <div class="editor">
         <h1>A Custom Editor.</h1>
         <p>Try making some changes here. Add your own text or maybe an image.</p>
