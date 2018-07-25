@@ -6,11 +6,17 @@
       <div class="fore-wrapper">
         <i class="fa fa-font" style="color: #C96;"></i>
         <div class="fore-palette">
+          <a v-for="color in colorPalette" v-bind:key="color" v-bind:class="'palette-item'"
+            v-bind:href="'#'" v-bind:data-value="color" v-bind:data-command="forecolor"
+            v-bind:style="{backgroundColor: color}"></a>
         </div>
       </div>
       <div class="back-wrapper">
         <i class="fa fa-font" style="background: #C96;"></i>
         <div class="back-palette">
+            <a v-for="color in colorPalette" v-bind:key="color" v-bind:class="'palette-item'"
+            v-bind:href="'#'" v-bind:data-value="color" v-bind:data-command="forecolor"
+            v-bind:style="{backgroundColor: color}"></a>
         </div>
       </div>
       <a href="#" data-command="bold"><i class="fa fa-bold">  </i></a>
@@ -59,15 +65,20 @@
     },
     data () {
       return {
-        currentTime: null
+        currentTime: null,
+        colorPalette: ['#000000', '#FF9966', '#6699FF', '#99FF66', '#CC0000', '#00CC00', '#0000CC', '#333333', '#0066FF', '#FFFFFF']
       }
     },
     created () {
-      this.time()
-      setInterval(this.time, 1000)
+
     },
     destroyed () {
       clearInterval(this.time())
+    },
+    mounted () {
+      // set the time.
+      this.time()
+      setInterval(this.time, 1000)
     },
     methods: {
       time: function () {
@@ -123,7 +134,6 @@
   .back-wrapper {
     border: 1px solid #AAA;
     background: #FFF;
-    font-family: 'Courier New';
     border-radius: 1px;
     color: black;
     padding: 5px;
@@ -135,74 +145,73 @@
     box-shadow: 0px 1px 0px #CCC;
   }
 
-.toolbar a:hover,
-.fore-wrapper:hover,
-.back-wrapper:hover {
-  background: #f2f2f2;
-  border-color: #8c8c8c;
-}
+  .toolbar a:hover,
+  .fore-wrapper:hover,
+  .back-wrapper:hover {
+    background: #f2f2f2;
+    border-color: #8c8c8c;
+  }
 
-a[data-command='redo'],
-a[data-command='strikeThrough'],
-a[data-command='justifyFull'],
-a[data-command='insertOrderedList'],
-a[data-command='outdent'],
-a[data-command='p'],
-a[data-command='superscript'] {
-  margin-right: 5px;
-  border-radius: 0 3px 3px 0;
-}
+  a[data-command='redo'],
+  a[data-command='strikeThrough'],
+  a[data-command='justifyFull'],
+  a[data-command='insertOrderedList'],
+  a[data-command='outdent'],
+  a[data-command='p'],
+  a[data-command='superscript'] {
+    margin-right: 5px;
+    border-radius: 0 3px 3px 0;
+  }
 
-a[data-command='undo'],
-.fore-wrapper,
-a[data-command='justifyLeft'],
-a[data-command='insertUnorderedList'],
-a[data-command='indent'],
-a[data-command='h1'],
-a[data-command='subscript'] {
-  border-radius: 3px 0 0 3px;
-}
+  a[data-command='undo'],
+  .fore-wrapper,
+  a[data-command='justifyLeft'],
+  a[data-command='insertUnorderedList'],
+  a[data-command='indent'],
+  a[data-command='h1'],
+  a[data-command='subscript'] {
+    border-radius: 3px 0 0 3px;
+  }
 
-a.palette-item {
-  height: 1em;
-  border-radius: 3px;
-  margin: 2px;
-  width: 1em;
-  border: 1px solid #CCC;
-}
+  .fore-palette,
+  .back-palette {
+    display: none;
+  }
 
-a.palette-item:hover {
-  border: 1px solid #CCC;
-  box-shadow: 0 0 3px #333;
-}
+  .fore-wrapper,
+  .back-wrapper {
+    display: inline-block;
+    cursor: pointer;
+  }
 
-.fore-palette,
-.back-palette {
-  display: none;
-}
+  .fore-wrapper:hover .fore-palette,
+  .back-wrapper:hover .back-palette {
+    display: block;
+    float: left;
+    position: absolute;
+    padding: 3px;
+    width: 160px;
+    background: #FFF;
+    border: 1px solid #DDD;
+    box-shadow: 0 0 5px #CCC;
+    height: 70px;
+  }
 
-.fore-wrapper,
-.back-wrapper {
-  display: inline-block;
-  cursor: pointer;
-}
+  .fore-palette a,
+  .back-palette a {
+    background: #FFF;
+    margin-bottom: 2px;
+  }
+  a.palette-item {
+    height: 1em;
+    border-radius: 3px;
+    margin: 2px;
+    width: 1em;
+    border: 1px solid #CCC;
+  }
 
-.fore-wrapper:hover .fore-palette,
-.back-wrapper:hover .back-palette {
-  display: block;
-  float: left;
-  position: absolute;
-  padding: 3px;
-  width: 160px;
-  background: #FFF;
-  border: 1px solid #DDD;
-  box-shadow: 0 0 5px #CCC;
-  height: 70px;
-}
-
-.fore-palette a,
-.back-palette a {
-  background: #FFF;
-  margin-bottom: 2px;
-}
+  a.palette-item:hover {
+    border: 1px solid #CCC;
+    box-shadow: 0 0 3px #333;
+  }
 </style>
