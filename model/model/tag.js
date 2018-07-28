@@ -1,5 +1,5 @@
 module.exports = function(sequelize, DataTypes) {
-    var Tag = sequelize.define('Tag', {
+    var tag = sequelize.define('tag', {
       title: {
           type: DataTypes.STRING(16)
       }
@@ -7,5 +7,5 @@ module.exports = function(sequelize, DataTypes) {
         timestamps: false
     });
 
-    return Tag;
+    return tag;
 };
