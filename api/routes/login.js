@@ -21,14 +21,4 @@ router.post('/user', urlencodedParser, (req, res) => {
 
 })
 
-/* GET developer by ID. */
-router.get('/developers/:id', (req, res) => {
-  const id = parseInt(req.params.id)
-  if (id >= 0 && id < data.length) {
-    res.json(data[id])
-  } else {
-    res.sendStatus(404)
-  }
-})
-
 module.exports = router;
