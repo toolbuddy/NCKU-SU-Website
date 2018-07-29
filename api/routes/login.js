@@ -11,11 +11,16 @@ router.post('/user', urlencodedParser, (req, res) => {
     let Valvalid = checkVal(pwd);
     let lengthvalid = checkLength(pwd);
     let status;
-    let val;
 
   if(Valvalid && lengthvalid){
     // connect to mysql code...
-    
+    loginOperation.login(username, pwd)
+    .then( val =>{
+        // 0 -> success
+        // 1 -> wrong password
+        // 2 -> wrong account
+        status = "0"
+    });
   }
   else if(Valvalid && (!lengthvalid)){
     status = "100";
