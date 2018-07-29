@@ -39,7 +39,9 @@
       <a href="#" data-command="unlink" v-on:click="operation"><i class="fa fa-unlink"> </i></a>
       <a href="#" data-command="insertimage" v-on:click="operation">
         <i class="fa fa-image"> </i>
-        <input id="imageUploader" type="file" style="display: none" v-on:change="handleFile">
+        <form action="/api/upload" enctype="multipart/form-data" method="post">
+          <input name="uploadingFile" type="file" style="display: none" accept="image/gif,image/png,image/jpg,image/jpeg"/>
+        </form>
       </a>
       <a href="#" data-command="subscript" v-on:click="operation"><i class="fa fa-subscript"> </i></a>
       <a href="#" data-command="superscript" v-on:click="operation"><i class="fa fa-superscript"> </i></a>
@@ -49,8 +51,8 @@
       <h1>A Custom Editor.</h1>
       <p>Try making some changes here. Add your own text or maybe an image.</p>
     </div>
-    <label> 發布者： {{author}} </label> <br/>
-    <time> 發布時間：{{currentTime}} </time> <br/>
+    <label name="poster"> 發布者： {{author}} </label> <br/>
+    <time name="post_time"> 發布時間：{{currentTime}} </time> <br/>
     <select name="type">
     　 <option value="topnews">重要公告</option>
     　 <option value="message">文字快訊</option>
@@ -61,6 +63,9 @@
 </template>
 
 <script>
+  import axios from '~/plugins/axios'
+  import qs from 'qs'
+
   export default {
     name: 'custom-post',
     props: {
@@ -135,28 +140,38 @@
             document.execCommand(command, false, null)
             break
         }
-      },
-      handleFile: function () {
-        // get the files.
-        const files = document.getElementById('imageUploader').files
-        const number = files.length
-        if (number !== 0) {
-          const target = files[0]
-          // check the file type is image.
-          if (target.type.match('image.*')) {
-            // use FileReader read the image.
-            const fileReader = new FileReader()
-            fileReader.onload = (fileLoadedEvent) => {
-              // insert the image to editor.
-              document.execCommand('insertimage', false, window.URL.createObjectURL(target))
-            }
-            fileReader.readAsDataURL(target)
-          }
+        if (command === 'forecolor' || command === 'backcolor') {
+          const value = e.currentTarget.getAttribute('data-value')
+          document.execCommand(command, false, value)
+        }
+        if (command === 'createlink') {
+          let url = prompt('Enter the link here', 'http://')
+          document.execCommand(command, false, url)
+        }
+        if (command === 'insertimage') {
+          const parent = e.currentTarget
+          const child = parent.querySelector('input')
+          child.click()
+
+        } else {
+          document.execCommand(command, false, null)
         }
       },
       post: function () {
         console.log('post button click!!')
         // post announcement code here...
+        const param = {
+          poster: document.getElementsByName('poster')[0].textContent,
+          time: document.getElementsByName('post_time')[0].textContent,
+          type: document.getElementsByName('type')[0].value,
+          content: document.getElementsByClassName('editor')[0].outerHTML
+        }
+        axios.post('/api/saveArticle',qs.stringify(param)
+        ).then((value)=>{
+          console.log("article post is done");
+        }).catch((err)=>{
+          console.log(err);
+        })
       }
     }
   }
