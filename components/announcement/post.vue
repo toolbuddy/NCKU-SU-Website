@@ -74,7 +74,8 @@
     data () {
       return {
         currentTime: null,
-        colorPalette: ['#000000', '#FF9966', '#6699FF', '#99FF66', '#CC0000', '#00CC00', '#0000CC', '#333333', '#0066FF', '#FFFFFF']
+        colorPalette: ['#000000', '#FF9966', '#6699FF', '#99FF66', '#CC0000', '#00CC00', '#0000CC', '#333333', '#0066FF', '#FFFFFF'],
+        uploads: []
       }
     },
     created () {
@@ -114,9 +115,30 @@
       },
       operation: function (e) {
         const command = e.currentTarget.getAttribute('data-command')
-        console.log(command)
-        if (command === 'h1' || command === 'h2' || command === 'p') {
-          document.execCommand('formatBlock', false, command)
+        // accroding to the command to do the corresponding operation.
+        switch (command) {
+          case 'h1':
+          case 'h2':
+          case 'p':
+            document.execCommand('formatBlock', false, command)
+            break
+          case 'forecolor':
+          case 'backcolor':
+            const value = e.currentTarget.getAttribute('data-value')
+            document.execCommand(command, false, value)
+            break
+          case 'createlink':
+            let url = prompt('Enter the link here', 'http://')
+            document.execCommand(command, false, url)
+            break
+          case 'insertimage':
+            const parent = e.currentTarget
+            const child = parent.querySelector('input')
+            child.click()
+            break
+          default:
+            document.execCommand(command, false, null)
+            break
         }
         if (command === 'forecolor' || command === 'backcolor') {
           const value = e.currentTarget.getAttribute('data-value')
