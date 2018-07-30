@@ -1,7 +1,7 @@
 const { Router } = require('express')
 
 const router = Router()
-const loginOperation = require('../../model/query/login.js')
+const accountOp= require('../../model/query/account.js')
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false});
 
@@ -14,7 +14,7 @@ router.post('/user', urlencodedParser, (req, res) => {
 
   if(Valvalid && lengthvalid){
     // connect to mysql code...
-    loginOperation.login(username, pwd)
+    accountOp.login(username, pwd)
     .then( val =>{
         // 0 -> success
         // 1 -> wrong password
