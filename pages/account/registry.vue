@@ -27,13 +27,12 @@
             password: pwd.value,
             name: document.getElementById('name').value
           }
-
-          axios.post('/api/registry' , qs.stringify(params)
-          ).then((val)=>{
-            console.log(val);
-          }).catch((err)=>{
-            console.log(err);
-          });
+          axios.post('/api/registry', qs.stringify(params)
+          ).then((val) => {
+            console.log(val)
+          }).catch((err) => {
+            console.log(err)
+          })
         }
       }
     }
