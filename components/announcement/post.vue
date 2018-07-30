@@ -152,7 +152,6 @@
           const parent = e.currentTarget
           const child = parent.querySelector('input')
           child.click()
-
         } else {
           document.execCommand(command, false, null)
         }
@@ -166,11 +165,11 @@
           type: document.getElementsByName('type')[0].value,
           content: document.getElementsByClassName('editor')[0].outerHTML
         }
-        axios.post('/api/saveArticle',qs.stringify(param)
-        ).then((value)=>{
-          console.log("article post is done");
-        }).catch((err)=>{
-          console.log(err);
+        axios.post('/api/saveArticle', qs.stringify(param)
+        ).then((value) => {
+          console.log('article post is done')
+        }).catch((err) => {
+          console.log(err)
         })
       }
     }
