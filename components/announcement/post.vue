@@ -45,9 +45,9 @@
       <a href="#" data-command="superscript" v-on:click="operation"><i class="fa fa-superscript"> </i></a>
     </div>
     <br/>
-    <h1 id="title" contenteditable> Title Here </h1>
-    <div class="editor" contenteditable>
-      <h1>A Custom Editor.</h1>
+    <h1 class="editor" id="title" contenteditable> Title Here </h1>
+    <div class="editor" id="content" contenteditable>
+      <p>A Custom Editor.</p>
       <p>Try making some changes here. Add your own text or maybe an image.</p>
     </div>
     <label name="poster"> 發布者： {{author}} </label> <br/>
@@ -209,13 +209,18 @@
 </script>
 
 <style scoped>
-  .editor {
-    box-shadow: 0 0 2px #CCC;
+  #title {
+    padding: 0.3em;
+  }
+  #content {
     min-height: 150px;
     overflow: auto;
     padding: 1em;
-    margin-top: 40px;
     resize: vertical;
+  }
+  .edtior {
+    box-shadow: 0 0 2px #CCC;
+    overflow: auto;
     outline: none;
   }
   .float-left {
@@ -224,7 +229,9 @@
   .toolbar {
     text-align: center;
   }
-
+  h1 {
+    margin-top: 40px;
+  }
   .toolbar a,
   .fore-wrapper,
   .back-wrapper {

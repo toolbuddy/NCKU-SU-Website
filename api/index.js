@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 
 // Create express instnace
 const app = express();
@@ -15,7 +16,7 @@ global.rootPath = path.join(__dirname + '/../');
 app.use(users);
 app.use(login);
 app.use(post);
-app.use(express.urlencoded());
+app.use(bodyParser.urlencoded({ extended: false }))
 
 // Export the server middleware
 module.exports = {

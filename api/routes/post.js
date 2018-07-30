@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extends:false, limit: '50mb'});
 const formidable = require('formidable');
 
-function uuid() {
+const uuid = () => {
   let current = Date.now();
   if (typeof performance !== 'undefined' && typeof performance.now === 'function'){
     current += performance.now();
@@ -20,8 +20,6 @@ function uuid() {
 router.post('/upload', urlencodedParser ,(req,res)=>{
   
   const form = new formidable.IncomingForm();
-  form.encoding = 'utf-8';
-  form.keepExtensions = true;
   // parse the form
   form.parse(req, (err, fields, files) => {
     if (err) throw err
@@ -41,7 +39,7 @@ router.post('/upload', urlencodedParser ,(req,res)=>{
       const tmpPath = uploadedFile.path
       let targetPath = rootPath + 'static/uploads/post/' + fields.title + '_' + number
         + '/images/' + uploadedFile.name
-      uploadedFilePath.push('localhost:3000/static/uploads/post/' + fields.title + '_' + number
+      uploadedFilePath.push('localhost:3000/uploads/post/' + fields.title + '_' + number
       + '/images/' + uploadedFile.name)
       // save the uploaded image.
       fs.rename(tmpPath, targetPath, function(err) {
