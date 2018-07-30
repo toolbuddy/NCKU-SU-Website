@@ -4,6 +4,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extends:false, limit: '50mb'});
 const formidable = require('formidable');
+const articleOp = require('../../model/query/article.js');
 
 const uuid = () => {
   let current = Date.now();
@@ -57,11 +58,17 @@ router.post('/upload', urlencodedParser ,(req,res)=>{
 });
 
 router.post('/saveArticle',urlencodedParser, (req,res) => {
+
+  // TODO: fix wrong usage
   const poster = req.body.poster; 
   const time = req.body.time;
   const type = req.body.type;
   const content = req.body.content;
-  console.log(req.body);
+  
+
+  // send data to database
+  articleOp.add("studentId", "this_is_title", content, "type(integer)", ["array", "of", "tags"]);
+   
   res.send("kkk");
 });
 

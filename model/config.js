@@ -8,6 +8,7 @@ var all = {
         },
         host: 'localhost',
         dialect: 'mysql',
+        operatorsAliases: 'false'
     }
 }
 
