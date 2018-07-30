@@ -37,23 +37,22 @@
       <a href="#" data-command="p" v-on:click="operation"> P </a>
       <a href="#" data-command="createlink" v-on:click="operation"><i class="fa fa-link"> </i></a>
       <a href="#" data-command="unlink" v-on:click="operation"><i class="fa fa-unlink"> </i></a>
-      <a href="#" data-command="insertimage" v-on:click="operation">
+      <a href="#" id="imageButton" data-command="insertimage" v-on:click="operation">
         <i class="fa fa-image"> </i>
-        <form action="/api/upload" enctype="multipart/form-data" method="post">
-          <input name="uploadingFile" type="file" style="display: none" accept="image/gif,image/png,image/jpg,image/jpeg"/>
-        </form>
+        <input id="imageUploader" v-on:change="handleFile" name="uploadingFile" type="file" style="display: none" multiple accept="image/*"/>
       </a>
       <a href="#" data-command="subscript" v-on:click="operation"><i class="fa fa-subscript"> </i></a>
       <a href="#" data-command="superscript" v-on:click="operation"><i class="fa fa-superscript"> </i></a>
     </div>
     <br/>
-    <div class="editor" contenteditable>
-      <h1>A Custom Editor.</h1>
+    <h1 class="editor" id="title" contenteditable> Title Here </h1>
+    <div class="editor" id="content" contenteditable>
+      <p>A Custom Editor.</p>
       <p>Try making some changes here. Add your own text or maybe an image.</p>
     </div>
     <label name="poster"> 發布者： {{author}} </label> <br/>
     <time name="post_time"> 發布時間：{{currentTime}} </time> <br/>
-    <select name="type">
+    <select name="type" v-on:change="handleType">
     　 <option value="topnews">重要公告</option>
     　 <option value="message">文字快訊</option>
     </select><br/>
@@ -74,8 +73,7 @@
     data () {
       return {
         currentTime: null,
-        colorPalette: ['#000000', '#FF9966', '#6699FF', '#99FF66', '#CC0000', '#00CC00', '#0000CC', '#333333', '#0066FF', '#FFFFFF'],
-        uploads: []
+        colorPalette: ['#000000', '#FF9966', '#6699FF', '#99FF66', '#CC0000', '#00CC00', '#0000CC', '#333333', '#0066FF', '#FFFFFF']
       }
     },
     created () {
@@ -113,8 +111,13 @@
         }
         this.currentTime = str
       },
-      operation: function (e) {
-        const command = e.currentTarget.getAttribute('data-command')
+      operation: function (event) {
+        if (Object.values(event.currentTarget.classList).findIndex((target) => {
+          return target === 'disabled'
+        })[0] !== -1) {
+          return
+        }
+        const command = event.currentTarget.getAttribute('data-command')
         // accroding to the command to do the corresponding operation.
         switch (command) {
           case 'h1':
@@ -124,7 +127,7 @@
             break
           case 'forecolor':
           case 'backcolor':
-            const value = e.currentTarget.getAttribute('data-value')
+            const value = event.currentTarget.getAttribute('data-value')
             document.execCommand(command, false, value)
             break
           case 'createlink':
@@ -132,7 +135,7 @@
             document.execCommand(command, false, url)
             break
           case 'insertimage':
-            const parent = e.currentTarget
+            const parent = event.currentTarget
             const child = parent.querySelector('input')
             child.click()
             break
@@ -140,37 +143,84 @@
             document.execCommand(command, false, null)
             break
         }
-        if (command === 'forecolor' || command === 'backcolor') {
-          const value = e.currentTarget.getAttribute('data-value')
-          document.execCommand(command, false, value)
+      },
+      handleFile: function () {
+        // get the files.
+        const files = document.getElementById('imageUploader').files
+        const number = files.length
+        if (number !== 0) {
+          for (let i = 0; i < files.length; ++i) {
+            const target = files[i]
+            // check the file type is image.
+            if (target.type.match('image.*')) {
+              // use FileReader read the image.
+              const fileReader = new FileReader()
+              fileReader.onload = (fileLoadedEvent) => {
+                const url = window.URL.createObjectURL(target)
+                // insert the image to editor.
+                document.execCommand('insertimage', false, url)
+                // get all insert img DOM element.
+                let images = Object.values(window.getSelection().focusNode.parentNode.querySelectorAll('img'))
+                // filt out the target img DOM element.
+                let image = images.filter(target => {
+                  return target.src === url
+                })[0]
+                // add class and file attribute.
+                image.classList.add('image')
+                image.file = files[i]
+              }
+              fileReader.readAsDataURL(target)
+            }
+          }
         }
-        if (command === 'createlink') {
-          let url = prompt('Enter the link here', 'http://')
-          document.execCommand(command, false, url)
-        }
-        if (command === 'insertimage') {
-          const parent = e.currentTarget
-          const child = parent.querySelector('input')
-          child.click()
-
-        } else {
-          document.execCommand(command, false, null)
+      },
+      handleType: function (event) {
+        const type = event.currentTarget.options[event.currentTarget.selectedIndex].value
+        const insertimageButton = document.getElementById('imageButton')
+        switch (type) {
+          case 'topnews':
+            // enable the feature of insert image
+            insertimageButton.classList.remove('disabled')
+            break
+          case 'message':
+            // disable the feature of insert image
+            insertimageButton.classList.add('disabled')
+            break
         }
       },
       post: function () {
         console.log('post button click!!')
-        // post announcement code here...
-        const param = {
-          poster: document.getElementsByName('poster')[0].textContent,
-          time: document.getElementsByName('post_time')[0].textContent,
-          type: document.getElementsByName('type')[0].value,
-          content: document.getElementsByClassName('editor')[0].outerHTML
+        // get all inserted images.
+        let images = document.querySelectorAll('.image')
+        const data = new FormData()
+        data.append('title', document.getElementById('title').textContent)
+        for (let i = 0; i < images.length; ++i) {
+          data.append('files[' + i + ']', images[i].file)
         }
-        axios.post('/api/saveArticle',qs.stringify(param)
-        ).then((value)=>{
-          console.log("article post is done");
-        }).catch((err)=>{
-          console.log(err);
+        axios.post('/api/upload', data, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }).then((response) => {
+          console.log('upload images success!!')
+          // modify all img DOM element to uploaded image.
+          for (let i = 0; i < response.data.length; ++i) {
+            images[i].src = response.data[i]
+            console.log(images[i].src)
+          }
+          // post announcement code here...
+          const param = {
+            poster: document.getElementsByName('poster')[0].textContent,
+            time: document.getElementsByName('post_time')[0].textContent,
+            type: document.getElementsByName('type')[0].value,
+            content: document.getElementsByClassName('editor')[0].outerHTML
+          }
+          axios.post('/api/saveArticle', qs.stringify(param)
+          ).then((value) => {
+            console.log('article post is done')
+          }).catch((err) => {
+            console.log(err)
+          })
         })
       }
     }
@@ -178,13 +228,18 @@
 </script>
 
 <style scoped>
-  .editor {
-    box-shadow: 0 0 2px #CCC;
+  #title {
+    padding: 0.3em;
+  }
+  #content {
     min-height: 150px;
     overflow: auto;
     padding: 1em;
-    margin-top: 40px;
     resize: vertical;
+  }
+  .edtior {
+    box-shadow: 0 0 2px #CCC;
+    overflow: auto;
     outline: none;
   }
   .float-left {
@@ -193,7 +248,9 @@
   .toolbar {
     text-align: center;
   }
-
+  h1 {
+    margin-top: 40px;
+  }
   .toolbar a,
   .fore-wrapper,
   .back-wrapper {
@@ -215,6 +272,10 @@
   .back-wrapper:hover {
     background: #f2f2f2;
     border-color: #8c8c8c;
+  }
+
+  .toolbar a.disabled {
+    background: #8c8c8c;
   }
 
   a[data-command='redo'],

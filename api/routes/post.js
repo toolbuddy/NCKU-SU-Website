@@ -2,25 +2,56 @@ const { Router } = require('express');
 const router =  Router();
 const fs = require('fs');
 const bodyParser = require('body-parser');
-const urlencodedParser = bodyParser.urlencoded({ extends:false});
+const urlencodedParser = bodyParser.urlencoded({ extends:false, limit: '50mb'});
 const formidable = require('formidable');
+
+const uuid = () => {
+  let current = Date.now();
+  if (typeof performance !== 'undefined' && typeof performance.now === 'function'){
+    current += performance.now();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    let r = (current + Math.random() * 16) % 16 | 0;
+    current = Math.floor(current / 16);
+      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
 
 router.post('/upload', urlencodedParser ,(req,res)=>{
   
   const form = new formidable.IncomingForm();
-
-  form.parse(req,(err,fields,files)=>{
-    if(err) throw err;
-    var uploadedFile = files.uploadingFile;
-    var tmpPath = uploadedFile.path;
-    var targetPath = '../../upload/' + uploadedFile.name;
-
-    fs.rename(tmpPath, targetPath, function(err) {
-      if (err) throw err;
-      fs.unlink(tmpPath, function() {
-        console.log('File Uploaded to ' + targetPath);
+  // parse the form
+  form.parse(req, (err, fields, files) => {
+    if (err) throw err
+    const uploadedFilePath = []
+    // use uuid to name the folder name.
+    const number = uuid()
+    // create or use existing folder.
+    try {
+      fs.mkdirSync(rootPath + 'static/uploads/post/' + fields.title + '_' + number)
+      fs.mkdirSync(rootPath + 'static/uploads/post/' + fields.title + '_' + number + '/images/')
+    } catch (err) {
+      if (err.code !== 'EEXIST') throw err
+    }
+    // visit all files
+    for (let key in files) {
+      const uploadedFile = files[key]
+      const tmpPath = uploadedFile.path
+      let targetPath = rootPath + 'static/uploads/post/' + fields.title + '_' + number
+        + '/images/' + uploadedFile.name
+      uploadedFilePath.push('localhost:3000/uploads/post/' + fields.title + '_' + number
+      + '/images/' + uploadedFile.name)
+      // save the uploaded image.
+      fs.rename(tmpPath, targetPath, function(err) {
+        if (err) throw err;
+        fs.unlink(tmpPath, function() {
+          console.log('File Uploaded to ' + targetPath)
+        });
       });
-    });
+    }
+    // return the uploaded file path.
+    res.set({ 'content-type': 'application/json; charset=utf-8' })
+    res.status(200).json(uploadedFilePath)
     res.end();
   });
 });
