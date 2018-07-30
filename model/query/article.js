@@ -1,16 +1,47 @@
 const db = require('../sqldb')
 const article = db.article;
+const articleTag = db.articleTag;
+const tag = db.tag;
 
 function addArticle(student, title, content, vital, tags) {
-  db.sequelize.transaction( t=> {
-    article.create({
-      studentId: student,
-      content: content,
-      vital: vital
-    });
-  });
 
-  // TODO: add tags
+  new Promise( (resolve, reject) => {
+    // add articles
+    db.sequelize.transaction( t => {
+      article.create({
+        studentId: student,
+        title: title,
+        content: content,
+        vital: vital
+      })
+      .then( res => {
+          resolve(res.getDataValue('id'));
+        });
+      });
+    }).then( articleId => {
+  
+    // add tags
+      var cnt = 1;
+      tags.forEach( ele => {
+        tag.findOrCreate({
+          where: {
+            title: ele
+          }
+        })
+        .then( res => {
+          ;
+          db.sequelize.transaction( t => {
+            articleTag.create({
+              articleId: articleId,
+              tagId: res[0].getDataValue('id')
+            })
+            .catch( err => {
+              console.log(err);
+            });
+          })
+        })
+      });
+    });
   console.log(tags);
 }
 

@@ -36,7 +36,7 @@ router.post('/saveArticle',urlencodedParser, (req,res) => {
   
 
   // send data to database
-  articleOp.add("studentId", "this_is_title", content, "vital?", ["array", "of", "tags"]);
+  articleOp.add("studentId", "this_is_title", content, "type(integer)", ["array", "of", "tags"]);
    
   res.send("kkk");
 });
