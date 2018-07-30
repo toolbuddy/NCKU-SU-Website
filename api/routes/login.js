@@ -61,7 +61,7 @@ router.post('/registry',urlencodedParser,(req,res)=>{
   res.send(status);
 })
 
-function checkVal(str) {
+const checkVal = (str) => {
   var regExp = /^[\d|a-zA-Z]+$/;
   if (regExp.test(str))
       return true;
@@ -69,7 +69,7 @@ function checkVal(str) {
       return false;
 }
 
-function checkLength(str){
+const checkLength = (str) => {
   if(str.length >= 8 && str.length <= 20)
     return true
   else
