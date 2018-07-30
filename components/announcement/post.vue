@@ -37,7 +37,7 @@
       <a href="#" data-command="p" v-on:click="operation"> P </a>
       <a href="#" data-command="createlink" v-on:click="operation"><i class="fa fa-link"> </i></a>
       <a href="#" data-command="unlink" v-on:click="operation"><i class="fa fa-unlink"> </i></a>
-      <a href="#" data-command="insertimage" v-on:click="operation">
+      <a href="#" id="imageButton" data-command="insertimage" v-on:click="operation">
         <i class="fa fa-image"> </i>
         <input id="imageUploader" v-on:change="handleFile" name="uploadingFile" type="file" style="display: none" multiple accept="image/*"/>
       </a>
@@ -52,7 +52,7 @@
     </div>
     <label name="poster"> 發布者： {{author}} </label> <br/>
     <time name="post_time"> 發布時間：{{currentTime}} </time> <br/>
-    <select name="type">
+    <select name="type" v-on:change="handleType">
     　 <option value="topnews">重要公告</option>
     　 <option value="message">文字快訊</option>
     </select><br/>
@@ -111,8 +111,13 @@
         }
         this.currentTime = str
       },
-      operation: function (e) {
-        const command = e.currentTarget.getAttribute('data-command')
+      operation: function (event) {
+        if (Object.values(event.currentTarget.classList).findIndex((target) => {
+          return target === 'disabled'
+        })[0] !== -1) {
+          return
+        }
+        const command = event.currentTarget.getAttribute('data-command')
         // accroding to the command to do the corresponding operation.
         switch (command) {
           case 'h1':
@@ -122,7 +127,7 @@
             break
           case 'forecolor':
           case 'backcolor':
-            const value = e.currentTarget.getAttribute('data-value')
+            const value = event.currentTarget.getAttribute('data-value')
             document.execCommand(command, false, value)
             break
           case 'createlink':
@@ -130,7 +135,7 @@
             document.execCommand(command, false, url)
             break
           case 'insertimage':
-            const parent = e.currentTarget
+            const parent = event.currentTarget
             const child = parent.querySelector('input')
             child.click()
             break
@@ -167,6 +172,20 @@
               fileReader.readAsDataURL(target)
             }
           }
+        }
+      },
+      handleType: function (event) {
+        const type = event.currentTarget.options[event.currentTarget.selectedIndex].value
+        const insertimageButton = document.getElementById('imageButton')
+        switch (type) {
+          case 'topnews':
+            // enable the feature of insert image
+            insertimageButton.classList.remove('disabled')
+            break
+          case 'message':
+            // disable the feature of insert image
+            insertimageButton.classList.add('disabled')
+            break
         }
       },
       post: function () {
@@ -253,6 +272,10 @@
   .back-wrapper:hover {
     background: #f2f2f2;
     border-color: #8c8c8c;
+  }
+
+  .toolbar a.disabled {
+    background: #8c8c8c;
   }
 
   a[data-command='redo'],
