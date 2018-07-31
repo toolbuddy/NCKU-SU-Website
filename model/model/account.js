@@ -1,23 +1,23 @@
 var bcrypt = require('bcryptjs');
 
 module.exports = function(sequelize, DataTypes) {
-    var AccountData = sequelize.define('AccountData', {
-      StudentID: {
+    var account = sequelize.define('account', {
+      studentId: {
         type:DataTypes.STRING(9),
         primaryKey: true
       },
       password: {
         type:DataTypes.STRING(60)
       },
-      Permission: {
-        type:DataTypes.BOOLEAN
+      permission: {
+        type:DataTypes.INTEGER
       },
-      UserName: {
+      name: {
         type:DataTypes.STRING(16)
       }
     });
 
-    AccountData.hashFunc = async function(passwd) {
+    account.hashFunc = async function(passwd) {
         return new Promise((resolve, reject) => {
             bcrypt.hash(passwd, 10)
             .then(hash => {
@@ -26,10 +26,10 @@ module.exports = function(sequelize, DataTypes) {
         });
     };
 
-    AccountData.verify = async function(input, hashed) {
+    account.verify = async function(input, hashed) {
         return bcrypt.compare(input, hashed);
     }
 
-    return AccountData;
+    return account;
 };
 

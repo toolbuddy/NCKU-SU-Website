@@ -1,11 +1,18 @@
 const db = require('../sqldb')
-const account = db.AccountData;
+const account = db.account;
 
+/*
+ * login function
+ * return value:(string)
+ *  0 -> login success
+ *  1 -> password incorrect
+ *  2 -> username not exist
+ */
 function login(username, passwd) {
     
   return account.findOne({
       where: {
-          StudentID: username
+          studentId: username
       },
       attributes: ['password']
   })
@@ -25,5 +32,5 @@ function login(username, passwd) {
 }
 
 module.exports = {
-    login
+    login: login
 };
