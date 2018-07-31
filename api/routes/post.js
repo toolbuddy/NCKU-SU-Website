@@ -6,6 +6,7 @@ const urlencodedParser = bodyParser.urlencoded({ extends:false, limit: '50mb'});
 const formidable = require('formidable');
 const articleOp = require('../../model/query/article.js');
 
+// generate the uuid to name the post folder.
 const uuid = () => {
   let current = Date.now();
   if (typeof performance !== 'undefined' && typeof performance.now === 'function'){
@@ -18,7 +19,7 @@ const uuid = () => {
   });
 }
 
-router.post('/upload', urlencodedParser ,(req,res)=>{
+router.post('/upload', urlencodedParser, (req, res) => {
   
   const form = new formidable.IncomingForm();
   // parse the form
@@ -27,20 +28,26 @@ router.post('/upload', urlencodedParser ,(req,res)=>{
     const uploadedFilePath = []
     // use uuid to name the folder name.
     const number = uuid()
-    // create or use existing folder.
     try {
+      // create or use existing folder.
       fs.mkdirSync(rootPath + 'static/uploads/post/' + fields.title + '_' + number)
       fs.mkdirSync(rootPath + 'static/uploads/post/' + fields.title + '_' + number + '/images/')
     } catch (err) {
-      if (err.code !== 'EEXIST') throw err
+      if (err.code !== 'EEXIST') {      
+        console.log(err)
+        // return 304 status.
+        res.status(304)
+        res.end();
+      }
     }
     // visit all files
     for (let key in files) {
       const uploadedFile = files[key]
       const tmpPath = uploadedFile.path
-      let targetPath = rootPath + 'static/uploads/post/' + fields.title + '_' + number
+      const targetPath = rootPath + 'static/uploads/post/' + fields.title + '_' + number
         + '/images/' + uploadedFile.name
-      uploadedFilePath.push('localhost:3000/uploads/post/' + fields.title + '_' + number
+      // add the image file path to uploadedPath.
+      uploadedFilePath.push('/uploads/post/' + fields.title + '_' + number
       + '/images/' + uploadedFile.name)
       // save the uploaded image.
       fs.rename(tmpPath, targetPath, function(err) {
