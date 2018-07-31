@@ -114,7 +114,7 @@
       operation: function (event) {
         if (Object.values(event.currentTarget.classList).findIndex((target) => {
           return target === 'disabled'
-        })[0] !== -1) {
+        }) !== -1) {
           return
         }
         const command = event.currentTarget.getAttribute('data-command')
@@ -156,22 +156,27 @@
               // use FileReader read the image.
               const fileReader = new FileReader()
               fileReader.onload = (fileLoadedEvent) => {
+                // create the object url
                 const url = window.URL.createObjectURL(target)
                 // insert the image to editor.
                 document.execCommand('insertimage', false, url)
                 // get all insert img DOM element.
-                let images = Object.values(window.getSelection().focusNode.parentNode.querySelectorAll('img'))
+                let images = Object.values(document.getElementById('content').querySelectorAll('img'))
                 // filt out the target img DOM element.
                 let image = images.filter(target => {
                   return target.src === url
                 })[0]
                 // add class and file attribute.
                 image.classList.add('image')
-                image.file = files[i]
+                image.file = target
+                // revoke the object url
+                window.URL.revokeObjectURL(target)
               }
               fileReader.readAsDataURL(target)
             }
           }
+          // remove all file in the FileList of input.
+          document.getElementById('imageUploader').value = ''
         }
       },
       handleType: function (event) {
