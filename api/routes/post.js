@@ -59,11 +59,15 @@ router.post('/upload', urlencodedParser ,(req,res)=>{
 
 router.post('/saveArticle',urlencodedParser, (req,res) => {
 
-  // TODO: fix wrong usage
-  const poster = req.body.poster; 
+  const title = req.body.title;
+  const announcer = req.body.announcer; 
   const time = req.body.time;
-  const type = req.body.type;
+  var type;
   const content = req.body.content;
+  if (req.body.type == "1")
+    type = 1; // important
+  else
+    type = 0; // not important
   
 
   // send data to database
