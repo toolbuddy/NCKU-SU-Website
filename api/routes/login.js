@@ -1,9 +1,15 @@
 const { Router } = require('express')
-
 const router = Router()
 const accountOp= require('../../model/query/account.js')
-var bodyParser = require('body-parser');
-var urlencodedParser = bodyParser.urlencoded({ extended: false});
+const bodyParser = require('body-parser');
+const urlencodedParser = bodyParser.urlencoded({ extended: false});
+const sha1 = require('js-sha1')
+const session = require('express-session');
+
+app.get('/',(req,res)=>{
+  console.log('123');
+  res.end();
+})
 
 router.post('/user', urlencodedParser, (req, res) => {
     let username = req.body.username;
@@ -19,20 +25,29 @@ router.post('/user', urlencodedParser, (req, res) => {
         // 0 -> success
         // 1 -> wrong password
         // 2 -> wrong account
-        status = "0"
+      status = "0"
+      if(status == "0"){
+        req.session.username = username;
+        req.session.isLogin = true;
+      }
     });
   }
   else if(Valvalid && (!lengthvalid)){
-    status = "100";
+    status = "100"; // invalid password's length
   }
   else if((!Valvalid) && lengthvalid){
-    status = "200";
+    status = "200"; // invalid password's char
   }
   else{
-    status = "300";
+    status = "300"; // invalid password's length and char
   }
 
   res.send(status);
+})
+
+router.get('/logout',(req,res) => {
+  req.session.destroy();
+  res.redirect('/');
 })
 
 
@@ -50,13 +65,13 @@ router.post('/registry',urlencodedParser,(req,res)=>{
     status = "0"
   }
   else if(Valvalid && (!lengthvalid)){
-    status = "100";
+    status = "100"; // invalid password's length
   }
   else if((!Valvalid) && lengthvalid){
-    status = "200";
+    status = "200"; // invalid password's char
   }
   else{
-    status = "300";
+    status = "300"; // invalid password's length and char
   }
   res.send(status);
 })
