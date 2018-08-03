@@ -1,8 +1,8 @@
 <template>
-  <div class="resizeable image" contenteditable="false">
+  <div class="resizeable" contenteditable="false">
     <span class="resize-handle-nw" v-on:mousedown="startResize"/>
     <span class="resize-handle-sw" v-on:mousedown="startResize"/>
-    <img :src="src" />
+    <img :src="src" class="image" />
     <span class="resize-handle-ne" v-on:mousedown="startResize"/>
     <span class="resize-handle-se" v-on:mousedown="startResize"/>
   </div>
@@ -91,12 +91,24 @@ export default {
       e.preventDefault()
       document.removeEventListener('mousemove', this.resizing)
       document.removeEventListener('mouseup', this.endResize)
+      this.getResizedImageFile()
     },
     resizeImage: function (width, height) {
       this.resizeCanvas.width = width
       this.resizeCanvas.height = height
       this.resizeCanvas.getContext('2d').drawImage(this.originImg, 0, 0, width, height)
       this.targetImg.setAttribute('src', this.resizeCanvas.toDataURL('image/*'))
+    },
+    getResizedImageFile: function () {
+      const dataURL = this.resizeCanvas.toDataURL('image/*')
+      const blobBin = atob(dataURL.split(',')[1])
+      const array = []
+      for (let i = 0; i < blobBin.length; i++) {
+        array.push(blobBin.charCodeAt(i))
+      }
+      const file = new Blob([new Uint8Array(array)], { type: 'image/*' })
+      this.targetImg.file = file
+      this.targetImg.file.name = this.file.name
     }
   }
 }
