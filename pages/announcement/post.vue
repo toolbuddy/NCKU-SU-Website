@@ -5,7 +5,7 @@
   </div>
 </template>
 <script>
-  import CustomPost from '~/components/announcement/post.vue'
+  import CustomPost from '~/components/announcement/editor/post.vue'
 
   export default {
     components: {
