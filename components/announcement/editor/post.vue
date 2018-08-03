@@ -175,7 +175,6 @@
                   }
                 })
                 insertImg.$mount(imageMount)
-                // this.$ref.content.appendChild(insertImg.$el)
                 // revoke the object url
                 window.URL.revokeObjectURL(target)
               }
@@ -207,7 +206,7 @@
         const data = new FormData()
         data.append('title', document.getElementById('title').textContent)
         for (let i = 0; i < images.length; ++i) {
-          data.append('files[' + i + ']', images[i].file)
+          data.append('files[' + i + ']', images[i].file, images[i].file.name)
         }
         axios.post('/api/upload', data, {
           headers: {
