@@ -68,7 +68,6 @@ router.post('/saveArticle',urlencodedParser, (req,res) => {
     type = 1; // important
   else
     type = 0; // not important
-  
 
   // send data to database
   articleOp.add("studentId", "this_is_title", content, "type(integer)", ["array", "of", "tags"]);

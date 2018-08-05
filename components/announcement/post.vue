@@ -209,8 +209,6 @@
             console.log(images[i].src)
           }
           // post announcement code here...
-          const today = new Date()
-          const postTime = today.getFullYear() + '/' + (today.getMonth() + 1) + '/' + today.getDate() + ' ' + today.getHours() + ':' + today.getMinutes()
           var Type
           if (document.getElementsByName('type')[0].value === 'topnews') {
             Type = '1'
@@ -220,7 +218,7 @@
           const param = {
             title: document.getElementById('title').textContent,
             announcer: 'will get from login status',
-            time: postTime,
+            time: this.currentTime,
             type: Type,
             content: document.getElementsByClassName('editor')[1].outerHTML
           }
