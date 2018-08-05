@@ -45,8 +45,8 @@
       <a href="#" data-command="superscript" v-on:click="operation"><i class="fa fa-superscript"> </i></a>
     </div>
     <br/>
-    <h1 class="editor" id="title" contenteditable> Title Here </h1>
-    <div class="editor" id="content" contenteditable>
+    <h1 class="editor" id="title" contenteditable="true"> Title Here </h1>
+    <div ref="content" class="editor" id="content" contenteditable>
       <p>A Custom Editor.</p>
       <p>Try making some changes here. Add your own text or maybe an image.</p>
     </div>
@@ -62,8 +62,11 @@
 </template>
 
 <script>
+  import Vue from 'vue'
   import axios from '~/plugins/axios'
   import qs from 'qs'
+  import ResizeableImg from '~/components/announcement/editor/resizeable-img.vue'
+  const ResizeableImgCtor = Vue.extend(ResizeableImg)
 
   export default {
     name: 'custom-post',
@@ -86,6 +89,9 @@
       // set the time.
       this.time()
       setInterval(this.time, 1000)
+    },
+    components: {
+      ResizeableImg
     },
     methods: {
       time: function () {
@@ -114,7 +120,7 @@
       operation: function (event) {
         if (Object.values(event.currentTarget.classList).findIndex((target) => {
           return target === 'disabled'
-        })[0] !== -1) {
+        }) !== -1) {
           return
         }
         const command = event.currentTarget.getAttribute('data-command')
@@ -156,22 +162,27 @@
               // use FileReader read the image.
               const fileReader = new FileReader()
               fileReader.onload = (fileLoadedEvent) => {
+                // create the object url
                 const url = window.URL.createObjectURL(target)
                 // insert the image to editor.
-                document.execCommand('insertimage', false, url)
-                // get all insert img DOM element.
-                let images = Object.values(window.getSelection().focusNode.parentNode.querySelectorAll('img'))
-                // filt out the target img DOM element.
-                let image = images.filter(target => {
-                  return target.src === url
-                })[0]
-                // add class and file attribute.
-                image.classList.add('image')
-                image.file = files[i]
+                document.execCommand('insertHTML', false, '<span id="imageMount"></span>')
+                const imageMount = document.getElementById('imageMount')
+                // const html = Vue.compile(`<resizeable-img src="${url}"> </resizeable-img>`)
+                const insertImg = new ResizeableImgCtor({
+                  propsData: {
+                    src: url,
+                    file: target
+                  }
+                })
+                insertImg.$mount(imageMount)
+                // revoke the object url
+                window.URL.revokeObjectURL(target)
               }
               fileReader.readAsDataURL(target)
             }
           }
+          // remove all file in the FileList of input.
+          document.getElementById('imageUploader').value = ''
         }
       },
       handleType: function (event) {
@@ -195,7 +206,7 @@
         const data = new FormData()
         data.append('title', document.getElementById('title').textContent)
         for (let i = 0; i < images.length; ++i) {
-          data.append('files[' + i + ']', images[i].file)
+          data.append('files[' + i + ']', images[i].file, images[i].file.name)
         }
         axios.post('/api/upload', data, {
           headers: {
@@ -347,4 +358,6 @@
     border: 1px solid #CCC;
     box-shadow: 0 0 3px #333;
   }
+
+
 </style>
