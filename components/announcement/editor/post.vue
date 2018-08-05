@@ -220,11 +220,18 @@
             console.log(images[i].src)
           }
           // post announcement code here...
+          var Type
+          if (document.getElementsByName('type')[0].value === 'topnews') {
+            Type = '1'
+          } else {
+            Type = '0'
+          }
           const param = {
-            poster: document.getElementsByName('poster')[0].textContent,
-            time: document.getElementsByName('post_time')[0].textContent,
-            type: document.getElementsByName('type')[0].value,
-            content: document.getElementsByClassName('editor')[0].outerHTML
+            title: document.getElementById('title').textContent,
+            announcer: 'will get from login status',
+            time: this.currentTime,
+            type: Type,
+            content: document.getElementsByClassName('editor')[1].outerHTML
           }
           axios.post('/api/saveArticle', qs.stringify(param)
           ).then((value) => {
