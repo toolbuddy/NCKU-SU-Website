@@ -23,10 +23,12 @@
           username: document.getElementById('username').value,
           password: document.getElementById('pwd').value
         }
-        axios.post('/api/user', qs.stringify(params)
-        ).then(function (response) {
+        axios('/api/login',{
+          method: 'post',
+          data: qs.stringify(params)
+        }).then(function (response) {
           console.log('success')
-          console.log(response)
+          console.log(response.data)
         }).catch(function (error) {
           console.log('false')
           console.log(error)
