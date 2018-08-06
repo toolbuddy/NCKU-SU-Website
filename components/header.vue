@@ -8,7 +8,8 @@
       <li><a href="#"> 聯絡我們 </a></li>
     </ul>
     <ul class="custom-ul-style float-right">
-      <li><router-link :to="{path: '/account/login'}"> 登入 </router-link></li>
+      <li><router-link :to="{path: '/account/login'}" v-if="!isLogin"> 登入 </router-link> </li>
+      <li><router-link :to="{path: '/account/login'}" v-if="isLogin"> 登出 </router-link> </li>
       <li><a href="#"> 臉書 </a></li>
       <li><a href="#"> IG </a></li>
     </ul>
@@ -17,7 +18,11 @@
 
 <script>
   export default {
-    name: 'custom-header'
+    name: 'custom-header',
+    props: {
+      isLogin: Boolean,
+      username: String
+    }
   }
 </script>
 

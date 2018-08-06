@@ -1,8 +1,8 @@
 var all = {
     sequelize: {
-        database: 'mydb',
+        database: 'test',
         username: 'root',
-        password:  null,
+        password: '',
         define: {
             charset: 'utf8'
         },

@@ -23,7 +23,7 @@ app.use(session({
   secret: '128 bytes random string', //will change it to another string in future
   store: myStore,
   resave: false,
-  saveUninitialized: true,
+  saveUninitialized: false,
   cookie: { maxAge: 600 * 1000 } // 10分鐘到期 default:{path:'/',httpOnly:true,secure:false,maxAge:null}
 }))
 
