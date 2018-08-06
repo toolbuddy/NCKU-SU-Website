@@ -21,7 +21,7 @@ router.post('/login', urlencodedParser, (req, res) => {
         // set session data
         req.session.username = username;
         req.session.isLogin = true;
-        res.send("0");
+        res.send(username)
       }
     });
   }
@@ -41,8 +41,9 @@ router.post('/login', urlencodedParser, (req, res) => {
 
 // logout
 router.get('/logout',(req,res) => {
+  console.log('logout!!')
   req.session.destroy();
-  res.end();
+  return res.redirect('/');
 })
 
 

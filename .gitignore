@@ -12,3 +12,9 @@ dist
 
 # Backpack build
 build
+
+# Test script
+test_script
+
+# Database config
+model/config/index.js

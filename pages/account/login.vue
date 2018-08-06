@@ -12,27 +12,16 @@
 </template>
 
 <script>
-  import axios from '~/plugins/axios'
-  import qs from 'qs'
-
   export default {
     methods: {
-      submit: function () {
+      submit: async function () {
         // login code here...
         const params = {
           username: document.getElementById('username').value,
           password: document.getElementById('pwd').value
         }
-        axios('/api/login',{
-          method: 'post',
-          data: qs.stringify(params)
-        }).then(function (response) {
-          console.log('success')
-          console.log(response.data)
-        }).catch(function (error) {
-          console.log('false')
-          console.log(error)
-        })
+        await this.$store.dispatch('login', params)
+        this.$router.push('../')
       }
     }
   }
