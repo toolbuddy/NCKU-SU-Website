@@ -1,44 +1,46 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
 import axios from '~/plugins/axios'
 import qs from 'querystring'
 
-Vue.use(Vuex)
-
-const store = () => new Vuex.Store({
-  state: {
-    authUser: null,
-    status: false
-  },
-  mutations: {
-    SET_USER: (state, user) => {
-      state.authUser = user
-      state.status = true
-    }
-  },
-  actions: {
-    nuxtServerInit ({commit}, {req}) {
-      if (req.session && req.session.status) {
-        commit('SET_USER', req.session.username)
-      }
-    },
-    async login ({commit}, params) {
-      axios('/api/login', {
-        method: 'post',
-        data: qs.stringify(params)
-      }).then(function (response) {
-        console.log('success')
-        console.log(response.data)
-        commit('SET_USER', response.data)
-      }).catch(function (error) {
-        console.log('false')
-        console.log(error)
-      })
-    },
-    async logout (commit, params) {
-
-    }
-  }
+export const state = () => ({
+  authUser: null,
+  status: false
 })
 
-export default store
+export const mutations = {
+  SET_USER: (state, user) => {
+    state.authUser = user
+    state.status = !(user === null)
+  }
+}
+
+export const actions = {
+  nuxtServerInit ({commit}, {req}) {
+    if (req.session && req.session.isLogin) {
+      commit('SET_USER', req.session.username)
+    }
+  },
+  nuxtClientInit ({commit}, {req}) {
+    if (req.session && req.session.isLogin) {
+      commit('SET_USER', req.session.username)
+    }
+  },
+  async login ({commit}, params) {
+    await axios('/api/login', {
+      method: 'post',
+      data: qs.stringify(params)
+    }).then(function (response) {
+      console.log('login success!!')
+      console.log(response.data)
+      return commit('SET_USER', response.data)
+    }).catch(function (error) {
+      console.log('false')
+      console.log(error)
+    })
+  },
+  async logout ({commit}, params) {
+    await axios.get('/api/logout'
+    ).then(function (response) {
+      return commit('SET_USER', null)
+    })
+  }
+}

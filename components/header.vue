@@ -8,8 +8,11 @@
       <li><a href="#"> 聯絡我們 </a></li>
     </ul>
     <ul class="custom-ul-style float-right">
-      <li><router-link :to="{path: '/account/login'}" v-if="!isLogin"> 登入 </router-link> </li>
-      <li><router-link :to="{path: '/account/login'}" v-if="isLogin"> 登出 </router-link> </li>
+      <li>
+        <router-link :to="{path: '/account/login'}" v-if="!this.$store.state.status"> 登入 </router-link> 
+        <label v-if="this.$store.state.status"> Hello, <a href="#"> {{this.$store.state.authUser}} </a>  !!</label>
+      </li>
+      <li><a v-if="this.$store.state.status" href="#" v-on:click="logout"> 登出 </a> </li>
       <li><a href="#"> 臉書 </a></li>
       <li><a href="#"> IG </a></li>
     </ul>
@@ -19,9 +22,10 @@
 <script>
   export default {
     name: 'custom-header',
-    props: {
-      isLogin: Boolean,
-      username: String
+    methods: {
+      logout: async function () {
+        await this.$store.dispatch('logout')
+      }
     }
   }
 </script>

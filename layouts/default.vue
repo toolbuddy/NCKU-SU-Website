@@ -1,6 +1,6 @@
 <template>
   <div>
-    <custom-header v-bind:isLogin=this.$store.state.status v-bind:username=this.$store.state.username></custom-header>
+    <custom-header></custom-header>
     <nuxt/>
     <custom-footer></custom-footer>
   </div>

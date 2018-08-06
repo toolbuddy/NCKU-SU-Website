@@ -21,7 +21,7 @@
           password: document.getElementById('pwd').value
         }
         await this.$store.dispatch('login', params)
-        this.$router.push({path: '../'})
+        this.$router.push('../')
       }
     }
   }
