@@ -54,12 +54,23 @@ function delArticle(id) {
   });
 }
 
-function getArticle(id) {
+function getArticle(type, sum, offset) {
   return new Promise( (resolve, reject) => {
-    article.findById(id)
-    .then( res => {
-      resolve(res.dataValues);
-    });
+  	article.findAll({
+	  where: {
+	  	vital: type
+	  },
+	  order: ['id'],
+	  offset: start,
+	  limit: sum
+	})
+	.then( res => {
+	  var tmp = [];
+	  res.forEach( ele => {
+		tmp.push(ele.dataValues);
+	  });
+	  resolve(tmp);
+	});
   });
 }
 
@@ -76,9 +87,8 @@ function getAccountArticle(student) {
   });
 }
 
-function getAllArticle(studentId) {
-}
 
 module.exports = {
-  add: addArticle
+  add: addArticle,
+  getArticle: getArticle
 }
