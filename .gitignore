@@ -17,4 +17,4 @@ build
 test_script
 
 # Database config
-model/config/index.js
+model/config/default.js
