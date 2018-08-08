@@ -5,5 +5,10 @@ module.exports = function(sequelize, DataTypes) {
         }
     });
 
+		discuss.associate = function(models) {
+			discuss.belongsTo(models.account, {foreignKey: 'studentId'});
+			discuss.hasMany(models.reply, {foreignKey: 'discussId'});
+		}
+
     return discuss;
 }
