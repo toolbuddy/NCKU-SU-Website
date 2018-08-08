@@ -74,6 +74,22 @@ function getArticle(type, sum, offset) {
   });
 }
 
+/* TODO: not this version! */
+function getSum(type) {
+  return new Promise( (resolve, reject) => {
+  	article.count( {
+  		where: {
+  			vital: type
+  		}
+  	})
+  	.then( sum => {
+  		resolve(sum);
+  	});
+  });
+}
+getSum(0).then(res=>{console.log(res)});
+getSum(1).then(res=>{console.log(res)});
+
 function getAccountArticle(student) {
   return new Promise( (resolve, reject) => {
     article.findAll({

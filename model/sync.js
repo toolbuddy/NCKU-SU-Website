@@ -2,7 +2,7 @@ const sqldb = require('./sqldb');
 
 sqldb.sequelize.sync({force: true})
 .then(() => {
-    console.log("Server started successfuly!");
+    console.log("Database sync successfuly!");
 })
 .catch( err=> {
     console.log(err);

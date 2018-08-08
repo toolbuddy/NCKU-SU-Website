@@ -5,5 +5,10 @@ module.exports = function(sequelize, DataTypes) {
         },
     });
 
+		poll.associate = function(models) {
+			poll.belongsTo(models.article, {foreignKey: 'articleId'});
+			poll.belongsTo(models.account, {foreignKey: 'studentId'});
+		}
+
     return poll;
 };
