@@ -125,14 +125,9 @@
           }
           const params = {
             username: document.getElementById('username').value,
-<<<<<<< HEAD
             password: pwd.value,
             name: document.getElementById('name').value,
             email: document.getElementById('email').value
-=======
-            password: pwd,
-            name: document.getElementById('name').value
->>>>>>> 6098cdfde06dd2a457d61af79c27ae01e28de59f
           }
           axios.post('/api/registry', qs.stringify(params)
           ).then((val) => {
