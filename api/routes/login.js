@@ -3,6 +3,8 @@ const router = Router()
 const accountOp= require('../../model/query/account.js')
 const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extended: false});
+const bcrypt = require('bcryptjs');
+
 // Import send email object
 const nodemailer = require('nodemailer');
 const config = require('../../model/config');
@@ -67,13 +69,19 @@ router.post('/registry',urlencodedParser,(req,res)=>{
   let Email = req.body.email;
   let Valvalid = checkVal(pwd);
   let lengthvalid = checkLength(pwd);
+  let passkey;
+
+  bcrypt.hash(Email,10)
+  .then((hash)=>{
+    passkey = hash;
+  })
+
   let options = {
     from: config.email.user,
     to: Email,
     subject: 'Authorization for NCKU-SU',
-    text: 'little in in is my teacher'
+    text: '<a href="http://localhost:3000/verify?token=' + passkey + '"></a>'
   }
-
   transporter.sendMail( options , (error,info) => {
     if(error) console.log(error);
     else console.log('Sending email: ' + info.response);
@@ -92,6 +100,12 @@ router.post('/registry',urlencodedParser,(req,res)=>{
   else{
     res.send("300"); // invalid password's length and char
   }
+})
+
+
+router.get('./verify',(req,res)=>{
+  let token = req.query.token;
+  
 })
 
 const checkVal = (str) => {
