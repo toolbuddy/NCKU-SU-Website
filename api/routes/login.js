@@ -56,10 +56,12 @@ router.post('/login', urlencodedParser, (req, res) => {
 // logout
 router.get('/logout',(req,res) => {
   console.log('logout!!')
+  // remove local cookie.
+  res.clearCookie('connect.sid');
+  // remove the server store cookie.
   req.session.destroy();
   return res.redirect('/');
 })
-
 
 router.post('/registry',urlencodedParser,(req,res)=>{
   console.log(req.body);
@@ -105,23 +107,6 @@ router.post('/registry',urlencodedParser,(req,res)=>{
 
 router.get('./verify',(req,res)=>{
   let token = req.query.token;
-  
 })
-
-const checkVal = (str) => {
-  var regExp = /^[\d|a-zA-Z]+$/;
-  if (regExp.test(str))
-      return true;
-  else
-      return false;
-}
-
-const checkLength = (str) => {
-  if(str.length >= 8 && str.length <= 20)
-    return true
-  else
-    return false
-}
-
 
 module.exports = router;
