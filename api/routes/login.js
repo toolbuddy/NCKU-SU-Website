@@ -17,12 +17,9 @@ const transporter = nodemailer.createTransport({
 })
 
 router.post('/login', urlencodedParser, (req, res) => {
-    var username = req.body.username;
-    let pwd = req.body.password;
-    let Valvalid = checkVal(pwd);
-    let lengthvalid = checkLength(pwd);
+    const username = req.body.username;
+    const pwd = req.body.password;
 
-  if(Valvalid && lengthvalid){
     // connect to mysql
     accountOp.login(username, pwd)
     .then( val =>{
@@ -39,18 +36,6 @@ router.post('/login', urlencodedParser, (req, res) => {
       }
     });
   }
-  else if(Valvalid && (!lengthvalid)){
-    // invalid password's length
-    res.send("100");
-  }
-  else if((!Valvalid) && lengthvalid){
-    // invalid password's char
-    res.send("200");
-  }
-  else{
-    // invalid password's length and char
-    res.send("300");
-  }
 })
 
 // logout
@@ -65,12 +50,10 @@ router.get('/logout',(req,res) => {
 
 router.post('/registry',urlencodedParser,(req,res)=>{
   console.log(req.body);
-  let username = req.body.username;
-  let pwd = req.body.password;
-  let name = req.body.name;
-  let Email = req.body.email;
-  let Valvalid = checkVal(pwd);
-  let lengthvalid = checkLength(pwd);
+  const username = req.body.username;
+  const pwd = req.body.password;
+  const name = req.body.name;
+  const Email = req.body.email;
   let passkey;
 
   bcrypt.hash(Email,10)
@@ -82,26 +65,12 @@ router.post('/registry',urlencodedParser,(req,res)=>{
     from: config.email.user,
     to: Email,
     subject: 'Authorization for NCKU-SU',
-    text: '<a href="http://localhost:3000/verify?token=' + passkey + '"></a>'
+    text: '<a href="http://localhost:3000/verify?token=' + passkey + '"> 點擊激活帳號 </a>'
   }
   transporter.sendMail( options , (error,info) => {
     if(error) console.log(error);
     else console.log('Sending email: ' + info.response);
   })
-
-  if(Valvalid && lengthvalid){
-    // connect to mysql code...
-    res.send("0");
-  }
-  else if(Valvalid && (!lengthvalid)){
-    res.send("100");// invalid password's length
-  }
-  else if((!Valvalid) && lengthvalid){
-    res.send("200"); // invalid password's char
-  }
-  else{
-    res.send("300"); // invalid password's length and char
-  }
 })
 
 
