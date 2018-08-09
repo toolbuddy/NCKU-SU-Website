@@ -3,18 +3,39 @@ const router = Router()
 const accountOp= require('../../model/query/account.js')
 const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extended: false});
+const bcrypt = require('bcryptjs');
+
+// Import send email object
+const nodemailer = require('nodemailer');
+const config = require('../../model/config');
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: config.email.user,
+    pass: config.email.pass
+  }
+})
 
 router.post('/login', urlencodedParser, (req, res) => {
-  let username = req.body.username;
-  let pwd = req.body.password;
-  // connect to mysql
-  accountOp.login(username, pwd)
-  .then(val => {
-    // set session data
-    req.session.username = username;
-    req.session.isLogin = true;
-    res.send(username)
-  });
+    const username = req.body.username;
+    const pwd = req.body.password;
+
+    // connect to mysql
+    accountOp.login(username, pwd)
+    .then( val =>{
+        // 0 -> success
+        // 1 -> wrong password
+        // 2 -> wrong account
+      if(val == "0"){
+        // set session data
+        req.session.username = username;
+        req.session.isLogin = true;
+        res.send(val);
+      } else {
+        res.send(val);
+      }
+    });
+  }
 })
 
 // logout
@@ -29,10 +50,32 @@ router.get('/logout',(req,res) => {
 
 router.post('/registry',urlencodedParser,(req,res)=>{
   console.log(req.body);
-  let username = req.body.username;
-  let pwd = req.body.password;
-  let name = req.body.name;
-  // TODO: write the registry data to database.
+  const username = req.body.username;
+  const pwd = req.body.password;
+  const name = req.body.name;
+  const Email = req.body.email;
+  let passkey;
+
+  bcrypt.hash(Email,10)
+  .then((hash)=>{
+    passkey = hash;
+  })
+
+  let options = {
+    from: config.email.user,
+    to: Email,
+    subject: 'Authorization for NCKU-SU',
+    text: '<a href="http://localhost:3000/verify?token=' + passkey + '"> 點擊激活帳號 </a>'
+  }
+  transporter.sendMail( options , (error,info) => {
+    if(error) console.log(error);
+    else console.log('Sending email: ' + info.response);
+  })
+})
+
+
+router.get('./verify',(req,res)=>{
+  let token = req.query.token;
 })
 
 module.exports = router;

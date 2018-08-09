@@ -1,6 +1,7 @@
 <template>
   <div>
     <h1> Registry 註冊</h1 >  
+    <label> 信箱 email </label><input type="text" id="email"/> <br/>
     <label> 帳號 username </label><input type="text" id="username"/> <br/>
     <label> 密碼 password </label><input type="password" id="pwd"/> <br/>
     <label> 確認密碼 check password </label><input type="password" id="checkpwd"> <br/>
@@ -124,8 +125,9 @@
           }
           const params = {
             username: document.getElementById('username').value,
-            password: pwd,
-            name: document.getElementById('name').value
+            password: pwd.value,
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value
           }
           axios.post('/api/registry', qs.stringify(params)
           ).then((val) => {
