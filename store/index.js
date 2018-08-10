@@ -3,25 +3,27 @@ import qs from 'querystring'
 
 export const state = () => ({
   authUser: null,
-  status: false
+  status: false,
+  role: null
 })
 
 export const mutations = {
-  SET_USER: (state, user) => {
-    state.authUser = user
-    state.status = !(user === null)
+  SET_USER: (state, data) => {
+    state.authUser = data.authUser
+    state.status = data.isLogin
+    state.role = data.role
   }
 }
 
 export const actions = {
   nuxtServerInit ({commit}, {req}) {
     if (req.session && req.session.isLogin) {
-      commit('SET_USER', req.session.username)
+      commit('SET_USER', req.session)
     }
   },
   nuxtClientInit ({commit}, {req}) {
     if (req.session && req.session.isLogin) {
-      commit('SET_USER', req.session.username)
+      commit('SET_USER', req.session)
     }
   },
   async login ({commit}, params) {
@@ -40,7 +42,12 @@ export const actions = {
   async logout ({commit}, params) {
     await axios.get('/api/logout'
     ).then(function (response) {
-      return commit('SET_USER', null)
+      const data = {
+        authUser: null,
+        status: false,
+        role: null
+      }
+      return commit('SET_USER', data)
     })
   }
 }
