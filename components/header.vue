@@ -8,7 +8,11 @@
       <li><a href="#"> 聯絡我們 </a></li>
     </ul>
     <ul class="custom-ul-style float-right">
-      <li><a href="#"> 登入 </a></li>
+      <li>
+        <router-link :to="{path: '/account/login'}" v-if="!this.$store.state.status"> 登入 </router-link> 
+        <label v-if="this.$store.state.status"> Hello, <a href="#"> {{this.$store.state.authUser}} </a>  !!</label>
+      </li>
+      <li><a v-if="this.$store.state.status" href="#" v-on:click="logout"> 登出 </a> </li>
       <li><a href="#"> 臉書 </a></li>
       <li><a href="#"> IG </a></li>
     </ul>
@@ -17,7 +21,12 @@
 
 <script>
   export default {
-    name: 'custom-header'
+    name: 'custom-header',
+    methods: {
+      logout: async function () {
+        await this.$store.dispatch('logout')
+      }
+    }
   }
 </script>
 

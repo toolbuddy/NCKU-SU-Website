@@ -13,5 +13,5 @@ dist
 # Backpack build
 build
 
-# Uploads
-static/uploads
+# Database config
+model/config/default.js
