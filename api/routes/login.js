@@ -17,25 +17,32 @@ const transporter = nodemailer.createTransport({
 })
 
 router.post('/login', urlencodedParser, (req, res) => {
-    const username = req.body.username;
-    const pwd = req.body.password;
-
-    // connect to mysql
-    accountOp.login(username, pwd)
-    .then( val =>{
-        // 0 -> success
-        // 1 -> wrong password
-        // 2 -> wrong account
-      if(val == "0"){
-        // set session data
-        req.session.username = username;
-        req.session.isLogin = true;
-        res.send(val);
-      } else {
-        res.send(val);
-      }
-    });
-  }
+  const username = req.body.username;
+  const pwd = req.body.password;
+  // connect to mysql
+  accountOp.login(username, pwd)
+  .then(val => {
+    /*
+     * status code
+     * 0 -> success
+     * 1 -> wrong password
+     * 2 -> wrong account
+     */
+    // TODO: need to get the permission from operation result.
+    const result = {
+      status: val,
+      authUser: val === '0' ? username : null,
+      isLogin: val === '0',
+      role: val
+    }
+    if (val == '0') {
+      // set session data
+      req.session.username = username
+      req.session.isLogin = true
+      req.session.role = val
+    }
+    res.json(result)
+  });
 })
 
 // logout
