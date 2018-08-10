@@ -37,7 +37,7 @@ router.post('/login', urlencodedParser, (req, res) => {
     }
     if (val == '0') {
       // set session data
-      req.session.username = username
+      req.session.authUser = username
       req.session.isLogin = true
       req.session.role = val
     }

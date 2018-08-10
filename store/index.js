@@ -12,11 +12,13 @@ export const mutations = {
     state.authUser = data.authUser
     state.status = data.isLogin
     state.role = data.role
+    console.log(data)
   }
 }
 
 export const actions = {
   nuxtServerInit ({commit}, {req}) {
+    console.log(req.session)
     if (req.session && req.session.isLogin) {
       commit('SET_USER', req.session)
     }
@@ -39,7 +41,7 @@ export const actions = {
       console.log(error)
     })
   },
-  async logout ({commit}, params) {
+  async logout ({commit}) {
     await axios.get('/api/logout'
     ).then(function (response) {
       const data = {
