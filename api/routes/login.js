@@ -68,7 +68,7 @@ router.post('/registry',urlencodedParser,(req,res)=>{
   const time = Date.now();
   const str = Email + '/' + time;
   //encrypt
-  const passkey = encrypt(str,"fuck you");
+  const passkey = encrypt(str,"test");
   let options = {
     from: config.email.user,
     to: Email,
@@ -86,7 +86,7 @@ router.get('/verify',(req,res)=>{
   console.log("get token");
   let token = req.query.token;
   //decrypt
-  let str = decrypt(token,"fuck you");
+  let str = decrypt(token,"test");
   let Email = str.split('/')[0];
   let time = parseInt(str.split('/')[1]);
   let diffTime = parseInt(Date.now()) - time ;
