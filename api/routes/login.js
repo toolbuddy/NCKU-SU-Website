@@ -61,13 +61,14 @@ router.post('/registry',urlencodedParser,(req,res)=>{
   const pwd = req.body.password;
   const name = req.body.name;
   const Email = req.body.email;
-  let passkey;
-
-  bcrypt.hash(Email,10)
-  .then((hash)=>{
-    passkey = hash;
-  })
-
+  const college = req.body.college;
+  const department = req.body.department;
+  const grade = req.body.grade;
+  // regist time 
+  const time = Date.now();
+  const str = Email + '/' + time;
+  //encrypt
+  const passkey = encrypt(str,"test");
   let options = {
     from: config.email.user,
     to: Email,
@@ -83,6 +84,20 @@ router.post('/registry',urlencodedParser,(req,res)=>{
 
 router.get('./verify',(req,res)=>{
   let token = req.query.token;
+  //decrypt
+  let str = decrypt(token,"test");
+  let Email = str.split('/')[0];
+  let time = parseInt(str.split('/')[1]);
+  let diffTime = parseInt(Date.now()) - time ;
+  //set expired time for 30 mins
+  if( diffTime > 1000*60*30 ){
+    console.log("Expired!!");
+  } else {
+    // make user finish 
+    console.log("success!!");
+  }
+  // direct to registry
+  return res.redirect('../../account/registry');
 })
 
 module.exports = router;
