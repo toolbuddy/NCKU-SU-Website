@@ -6,7 +6,7 @@
     <label> 密碼 password </label><input type="password" id="pwd"/> <br/>
     <label> 確認密碼 check password </label><input type="password" id="checkpwd"> <br/>
     <label> 姓名 name </label><input type="text" id="name"/> <br/>
-    <label> 學院 college </label> <select v-model="selected"> 
+    <label> 學院 college </label> <select id="college" v-model="selected"> 
       <option v-bind:value="'AN'"> 不分系 </option>
       <option v-bind:value="'LA'"> 文學院 </option>
       <option v-bind:value="'SC'"> 理學院 </option>
@@ -83,7 +83,7 @@
         <option v-bind:value="'I8'"> 藥學系 I8 </option>
       </select> 
     </section>
-    <label> 年級 grade </label> <select> 
+    <label> 年級 grade </label> <select id="grade"> 
       <option v-bind:value="'1'"> 一年級 Freshman </option>
       <option v-bind:value="'2'"> 二年級 Sophomore </option>
       <option v-bind:value="'3'"> 三年級 Junior </option>
@@ -125,9 +125,12 @@
           }
           const params = {
             username: document.getElementById('username').value,
-            password: pwd.value,
+            password: pwd,
             name: document.getElementById('name').value,
-            email: document.getElementById('email').value
+            email: document.getElementById('email').value,
+            college: document.getElementById('college').value,
+            department: document.getElementById('department').value,
+            grade: document.getElementById('grade').value
           }
           axios.post('/api/registry', qs.stringify(params)
           ).then((val) => {
