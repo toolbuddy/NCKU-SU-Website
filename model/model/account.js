@@ -11,14 +11,17 @@ var account = sequelize.define('account', {
     },
     permission: {
       type:DataTypes.INTEGER,
-	  default: false
+	    defaultValue: false
+    },
+    email: {
+      type: DataTypes.STRING(30)
     },
     name: {
       type:DataTypes.STRING(16)
     },
     verified: {
   	  type:DataTypes.BOOLEAN,
-	  default: false
+	    defaultValue: false
     }
   });
 

@@ -1,5 +1,5 @@
 Sequelize = require('sequelize');
-var config = require('../config.js');
+var config = require('../config/index.js');
 
 db = {
     sequelize: new Sequelize(config.sequelize.database, config.sequelize.username, config.sequelize.password, config.sequelize),
@@ -26,7 +26,8 @@ new Promise((resolve, reject) => {
 .then( () => {
 	// bind relations
 	for (var x in db.models) {
-		db.models[x].associate(db.models);
+    if (db.models[x].hasOwnProperty('associate'))
+		  db.models[x].associate(db.models);
 	}
 });
 
