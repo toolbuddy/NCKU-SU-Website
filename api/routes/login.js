@@ -24,23 +24,28 @@ router.post('/login', urlencodedParser, (req, res) => {
   .then(val => {
     /*
      * status code
-     * 0 -> success
-     * 1 -> wrong password
-     * 2 -> wrong account
+     * 0  -> success, no admin
+     * 1  -> success, with admin
+     * -1 -> wrong username or password
      */
-    // TODO: need to get the permission from operation result.
+    // TODO: need to check the permission from operation result.
+    // note: Help me check if the logic is correct 
     const result = {
-      status: val,
+      status: !(val==='-1'),    // only -1 represents login failure
       authUser: val === '0' ? username : null,
       isLogin: val === '0',
-      role: val
+      role: val // permission role
     }
+     
+    // This means login success without admin permission
     if (val == '0') {
       // set session data
       req.session.authUser = username
       req.session.isLogin = true
       req.session.role = val
     }
+
+    // TODO: login success with admin permission (role==1)
     res.json(result)
   });
 })
