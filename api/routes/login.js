@@ -3,7 +3,7 @@ const router = Router()
 const accountOp= require('../../model/query/account.js')
 const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extended: false});
-const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 // Import send email object
 const nodemailer = require('nodemailer');
@@ -28,24 +28,19 @@ router.post('/login', urlencodedParser, (req, res) => {
      * 1  -> success, with admin
      * -1 -> wrong username or password
      */
-    // TODO: need to check the permission from operation result.
-    // note: Help me check if the logic is correct 
+    // TODO: need to get the permission from operation result.
     const result = {
       status: !(val==='-1'),    // only -1 represents login failure
       authUser: val === '0' ? username : null,
       isLogin: val === '0',
       role: val // permission role
     }
-     
-    // This means login success without admin permission
     if (val == '0') {
       // set session data
       req.session.authUser = username
       req.session.isLogin = true
       req.session.role = val
     }
-
-    // TODO: login success with admin permission (role==1)
     res.json(result)
   });
 })
@@ -66,18 +61,19 @@ router.post('/registry',urlencodedParser,(req,res)=>{
   const pwd = req.body.password;
   const name = req.body.name;
   const Email = req.body.email;
-  let passkey;
-
-  bcrypt.hash(Email,10)
-  .then((hash)=>{
-    passkey = hash;
-  })
-
+  const college = req.body.college;
+  const department = req.body.department;
+  const grade = req.body.grade;
+  // regist time 
+  const time = Date.now();
+  const str = Email + '/' + time;
+  //encrypt
+  const passkey = encrypt(str,"test");
   let options = {
     from: config.email.user,
     to: Email,
     subject: 'Authorization for NCKU-SU',
-    text: '<a href="http://localhost:3000/verify?token=' + passkey + '"> 點擊激活帳號 </a>'
+    text: "激活網址： " + 'http://localhost:3000/api/verify?token=' + passkey
   }
   transporter.sendMail( options , (error,info) => {
     if(error) console.log(error);
@@ -86,8 +82,37 @@ router.post('/registry',urlencodedParser,(req,res)=>{
 })
 
 
-router.get('./verify',(req,res)=>{
+router.get('/verify',(req,res)=>{
+  console.log("get token");
   let token = req.query.token;
+  //decrypt
+  let str = decrypt(token,"test");
+  let Email = str.split('/')[0];
+  let time = parseInt(str.split('/')[1]);
+  let diffTime = parseInt(Date.now()) - time ;
+  //set expired time for 30 mins
+  if( diffTime > 1000*60*30 ){
+    console.log("Expired!!");
+  } else {
+    // make user finish 
+    console.log("success!!");
+  }
+  // direct to registry
+  return res.redirect('../../account/registry');
 })
+
+function encrypt (str,secret) {
+  let cipher = crypto.createCipher('aes192' , secret);
+  let enc = cipher.update(str,'utf8','hex');
+  enc += cipher.final('hex');
+  return enc;
+}
+
+function decrypt (str,secret) {
+  let decipher = crypto.createDecipher('aes192' , secret);
+  let dec = decipher.update(str,'hex','utf8');
+  dec += decipher.final('utf8');
+  return dec;
+}
 
 module.exports = router;
