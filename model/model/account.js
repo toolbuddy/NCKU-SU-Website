@@ -27,7 +27,6 @@ var account = sequelize.define('account', {
 	account.hasMany(models.message, {foreignKey: 'studentId'});
 	account.belongsToMany(models.topNews, {through: models.collection, foreignKey: 'studentId'});
 	account.belongsToMany(models.message, {through: models.collection, foreignKey: 'studentId'});
-	account.hasMany(models.poll, {foreignKey: 'studentId'});
 	account.hasMany(models.proposal, {foreignKey: 'studentId'});
 	account.belongsToMany(models.proposal, {through: models.proposalAgree, foreignKey: 'studentId'});
 	account.hasMany(models.discuss, {foreignKey: 'studentId'});
