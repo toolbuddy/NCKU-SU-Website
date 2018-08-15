@@ -13,7 +13,7 @@
     data () {
       return {
         articles: [
-          {title: 'test', author: 'F74052104', time: '2018-08-15 08:08 AM', visit: 120, content: '<p>test for content</p>'},
+          {title: 'test', author: 'F74052104', time: '2018-08-15 08:08 AM', visit: 120, content: '<p>test for content</p> <br/> <p>test for content</p>'},
           {title: 'test2', author: 'F74052104', time: '2018-08-15 08:18 AM', visit: 240, content: '<p>test2 for content</p>'},
           {title: 'test3', author: 'F74052104', time: '2018-08-15 08:28 AM', visit: 360, content: '<p>test3 for content</p>'}
         ]
