@@ -12,26 +12,26 @@
 </template>
 
 <script>
-  import axios from '~/plugins/axios';
-  import qs from "qs";
+  import axios from '~/plugins/axios'
+  import qs from 'qs'
 
   export default {
     methods: {
       submit: function () {
+        console.log('test')
         // login code here...
-       const params = {
-            username: document.getElementById('username').value,
-            password: document.getElementById('pwd').value,
+        const params = {
+          username: document.getElementById('username').value,
+          password: document.getElementById('pwd').value
         }
         axios.post('/api/user', qs.stringify(params)
-        ).then(function(response){
-          console.log("success");
-          console.log(response);
-        }).catch(function(error){
-          console.log("false");
-          console.log(error);
+        ).then(function (response) {
+          console.log('success')
+          console.log(response)
+        }).catch(function (error) {
+          console.log('false')
+          console.log(error)
         })
-        
       }
     }
   }
