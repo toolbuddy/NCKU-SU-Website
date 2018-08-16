@@ -28,6 +28,12 @@
       // clone a new node from old node.
       const newNode = oldNode.cloneNode(false)
       newNode.innerHTML = this.content
+      if (newNode.textContent.length > this.contentLength) {
+        newNode.textContent = newNode.textContent.substr('', this.contentLength)
+        newNode.textContent = newNode.textContent + '...詳細請查看全文'
+      } else {
+        newNode.textContent = newNode.textContent.substr('', this.contentLength)
+      }
       // replace the old node with new node.
       oldNode.parentNode.replaceChild(newNode, oldNode)
     }
