@@ -167,7 +167,6 @@
                 // insert the image to editor.
                 document.execCommand('insertHTML', false, '<span id="imageMount"></span>')
                 const imageMount = document.getElementById('imageMount')
-                // const html = Vue.compile(`<resizeable-img src="${url}"> </resizeable-img>`)
                 const insertImg = new ResizeableImgCtor({
                   propsData: {
                     src: url,
@@ -196,6 +195,11 @@
           case 'message':
             // disable the feature of insert image
             insertimageButton.classList.add('disabled')
+            // remove all images.
+            let images = document.querySelectorAll('.resizeable-img')
+            for (let target of images) {
+              target.remove()
+            }
             break
         }
       },
@@ -204,9 +208,10 @@
         // get all inserted images.
         let images = document.querySelectorAll('.image')
         const data = new FormData()
+        console.log(images)
         data.append('title', document.getElementById('title').textContent)
-        for (let i = 0; i < images.length; ++i) {
-          data.append('files[' + i + ']', images[i].file, images[i].file.name)
+        for (let [index, element] of images.entries()) {
+          data.append('files[' + index + ']', element.file, element.file.name)
         }
         axios.post('/api/upload', data, {
           headers: {
@@ -215,9 +220,9 @@
         }).then((response) => {
           console.log('upload images success!!')
           // modify all img DOM element to uploaded image.
-          for (let i = 0; i < response.data.length; ++i) {
-            images[i].src = response.data[i]
-            console.log(images[i].src)
+          for (let [index, element] of response.data.entries()) {
+            images[index].src = element
+            console.log(images[index].src)
           }
           // post announcement code here...
           var Type
