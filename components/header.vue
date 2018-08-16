@@ -1,6 +1,6 @@
 <template>
   <header>
-    <h2><router-link :to="{path: '/'}"> 第 26 屆學生會官方網站 </router-link></h2>
+    <h2><router-link v-bind:to="{path: '/'}"> 第 26 屆學生會官方網站 </router-link></h2>
     <ul class="custom-ul-style">
       <li><a href="#"> 關於學生會 </a></li>
       <li><a href="#"> 文章總覽 </a></li>

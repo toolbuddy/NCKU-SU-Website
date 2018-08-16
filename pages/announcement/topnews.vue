@@ -2,12 +2,15 @@
   <div>
     <topnews-comp v-for="post in this.articles" :key="post.content" v-bind:title="post.title" v-bind:author="post.author" 
       v-bind:time="post.title" v-bind:visitors="post.visit" v-bind:content="post.content"> </topnews-comp>
+  
+    <pagination v-bind:total="202" v-bind:displayPage="10" v-bind:currentPage="15"> </pagination>
   </div>
 
 </template>
 
 <script>
   import TopnewsComp from '~/components/announcement/topnews-column.vue'
+  import Pagination from '~/components/announcement/pagination.vue'
 
   export default {
     data () {
@@ -22,7 +25,8 @@
     async asyncData (context) {
     },
     components: {
-      TopnewsComp
+      TopnewsComp,
+      Pagination
     }
   }
 </script>
