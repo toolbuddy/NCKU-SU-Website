@@ -17,7 +17,6 @@ router.post('/login', urlencodedParser, (req, res) => {
      * -1 -> wrong username or password
      */
     // TODO: need to get the permission from operation result.
-    console.log(val);
     const result = {
       status: !(val==='-1'),    // only -1 represents login failure
       authUser: val === '0' ? username : null,

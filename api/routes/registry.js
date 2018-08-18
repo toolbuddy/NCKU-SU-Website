@@ -3,9 +3,9 @@ const router = Router()
 const accountOp= require('../../model/query/account.js')
 const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extended: false});
-const mail = require('./mailer.js');
-const crypto = require('crypto');
-const config = require('../../model/config');
+const mail = require('./about/mailer.js');
+const crypto = require('./about/crypto.js');
+const config = require('../../../model/config');
 
 router.post('/registry',urlencodedParser,(req,res)=>{
   console.log(req.body);
@@ -22,7 +22,7 @@ router.post('/registry',urlencodedParser,(req,res)=>{
   //save in database
   accountOp.create(req.body);
   //encrypt
-  const passkey = encrypt(str,"test");
+  const passkey = crypto.encrypt(str,"test");
   let options = {
     from: config.email.user,
     to: Email,
@@ -38,7 +38,7 @@ router.get('/verify',(req,res)=>{
   console.log("get token");
   let token = req.query.token;
   //decrypt
-  let str = decrypt(token,"test");
+  let str = crypto.decrypt(token,"test");
   let Email = str.split('/')[0];
   let time = parseInt(str.split('/')[1]);
   let diffTime = parseInt(Date.now()) - time ;
@@ -53,19 +53,5 @@ router.get('/verify',(req,res)=>{
   // direct to registry
   return res.redirect('../../account/registry');
 })
-
-function encrypt (str,secret) {
-  let cipher = crypto.createCipher('aes192' , secret);
-  let enc = cipher.update(str,'utf8','hex');
-  enc += cipher.final('hex');
-  return enc;
-}
-
-function decrypt (str,secret) {
-  let decipher = crypto.createDecipher('aes192' , secret);
-  let dec = decipher.update(str,'hex','utf8');
-  dec += decipher.final('utf8');
-  return dec;
-}
 
 module.exports = router;

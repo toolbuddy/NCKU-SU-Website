@@ -1,6 +1,6 @@
 // Import send email object
 const nodemailer = require('nodemailer');
-const config = require('../../model/config');
+const config = require('../../../model/config');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
