@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extended: false});
 const mail = require('./about/mailer.js');
 const crypto = require('./about/crypto.js');
-const config = require('../../../model/config');
+const config = require('../../model/config');
 
 router.post('/registry',urlencodedParser,(req,res)=>{
   console.log(req.body);

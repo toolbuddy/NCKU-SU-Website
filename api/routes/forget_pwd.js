@@ -2,8 +2,8 @@ const {Router} = require('express');
 const router = Router()
 const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extended: false});
-const mail = require('./mailer');
-const crypto = require('./crypto.js');
+const mail = require('./about/mailer.js');
+const crypto = require('./about/crypto.js');
 const config = require('../../model/config');
 const accountOp = require('../../model/query/account');
 
@@ -16,9 +16,10 @@ router.post('/forget_pwd',urlencodedParser,(req , res) => {
   const str = user + '/' + time;
   //encrypt
   const passkey = crypto.encrypt(str,"test");
-  // query email from database with username...
+  // query email from database with username
   accountOp.getEmail(user)
   .then((val)=>{
+    console.log(val);
     Email = val;
     options = {
       from: config.email.user,
@@ -42,7 +43,7 @@ router.get('/verify_forget_pwd',(req,res)=>{
   let time = parseInt(str.split('/')[1]);
   let diffTime = parseInt(Date.now()) - time ;
   //set expired time for 30 mins
-  if( diffTime > 1000*60*30 ){
+  if( diffTime > 1000*60*15 ){
     console.log("Expired!!");
     // direct to 驗證碼失效
     return res.redirect('../../account/registry');
@@ -50,41 +51,16 @@ router.get('/verify_forget_pwd',(req,res)=>{
     // direct to change password
     console.log("success!!");
     res.modify.username = user;
-    return res.redirect('/api/verified_change_pwd');
+    return res.redirect('../../account/verified_change_pwd');
   }
 })
 
 router.post('/verified_change_pwd',urlencodedParser,(req,res)=>{
-  const username = 'chia';
+  const username = req.modify.username;
   const new_pwd = req.body.new_pwd;
   accountOp.changepwd(username,new_pwd);
+  console.log("has changed password")
   res.end();
 })
 
-router.post('/change_pwd',urlencodedParser,(req , res) => {
-  const username = 'chia';
-  const pwd = req.body.pwd;
-  const new_pwd = req.body.new_pwd;
-
-  accountOp.login(username, pwd)
-  .then(val => {
-    /*
-     * status code
-     * 0  -> success, no admin
-     * 1  -> success, with admin
-     * -1 -> wrong username or password
-     */
-    // TODO: need to get the permission from operation result.
-    if( val === '0' || val === '1'){
-      // change password code ...
-      accountOp.changepwd(username,new_pwd);
-      res.end();
-    } else {
-      console.log("error password");
-      res.send("error password");
-    }
-  })
-  .catch((err) => {
-    console.log(err);
-  })
-})
+module.exports = router;
