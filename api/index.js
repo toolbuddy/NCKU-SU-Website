@@ -6,12 +6,14 @@ const app = express();
 
 // Require API routes
 const post = require('./routes/post');
+const getArticle = require('./routes/getArticles');
 // Config root path
 const path = require('path');
 global.rootPath = path.join(__dirname + '/../');
 
 // Import API Routes
 app.use(post);
+app.use(getArticle)
 app.use(bodyParser.urlencoded({ extended: false }))
 
 // Export the server middleware
