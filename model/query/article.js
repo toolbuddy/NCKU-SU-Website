@@ -59,7 +59,7 @@ function delArticle(id) {
 }
 
 function getArticle(type, sum, offset) {
-	const target = type?db.models.message:db.models.topNews;
+  const target = type?db.models.topNews:db.models.messages;
   return new Promise( (resolve, reject) => {
   	target.findAll({
 	    order: ['id'],
@@ -74,6 +74,12 @@ function getArticle(type, sum, offset) {
 	    resolve(tmp);
 	  });
   });
+}
+
+function getSum(type, id='all') {
+  const target = type?db.models.topNews:db.models.message;
+	if (id == 'all') return target.count();
+	else return target.count({where: { studentId: id}});
 }
 
 function getAccountArticle(student) {
@@ -92,5 +98,6 @@ function getAccountArticle(student) {
 
 module.exports = {
   add: addArticle,
-  getArticle: getArticle
+  getArticle: getArticle,
+	getSum: getSum
 }
