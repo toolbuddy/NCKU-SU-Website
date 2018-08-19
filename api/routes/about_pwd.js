@@ -4,11 +4,12 @@ const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extended: false});
 const mail = require('./mailer');
 const crypto = require('./crypto.js');
-const config = require('../../../model/config');
-const accountOp = require('../../model/query/account.js');
+const config = require('../../model/config');
+const accountOp = require('../../model/query/account');
 
 router.post('/forget_pwd',urlencodedParser,(req , res) => {
   let Email;
+  let options;
   const user = req.body.username;
   // send email time 
   const time = Date.now();
@@ -16,14 +17,20 @@ router.post('/forget_pwd',urlencodedParser,(req , res) => {
   //encrypt
   const passkey = crypto.encrypt(str,"test");
   // query email from database with username...
-
-  let options = {
-    from: config.email.user,
-    to: Email,
-    subject: 'Forget password for NCKU-SU',
-    text: "驗證網址： " + 'http://localhost:3000/api/verify_forget_pwd?token=' + passkey
-  }
-  mail(options);
+  accountOp.getEmail(user)
+  .then((val)=>{
+    Email = val;
+    options = {
+      from: config.email.user,
+      to: Email,
+      subject: 'Forget password for NCKU-SU',
+      text: "驗證網址： " + 'http://localhost:3000/api/verify_forget_pwd?token=' + passkey
+    }
+    mail(options);
+  })
+  .catch((err)=>{
+    console.log(err);
+  })
 })
 
 router.get('/verify_forget_pwd',(req,res)=>{
@@ -42,8 +49,16 @@ router.get('/verify_forget_pwd',(req,res)=>{
   } else {
     // direct to change password
     console.log("success!!");
-    return res.redirect('../../account/registry');
+    res.modify.username = user;
+    return res.redirect('/api/verified_change_pwd');
   }
+})
+
+router.post('/verified_change_pwd',urlencodedParser,(req,res)=>{
+  const username = 'chia';
+  const new_pwd = req.body.new_pwd;
+  accountOp.changepwd(username,new_pwd);
+  res.end();
 })
 
 router.post('/change_pwd',urlencodedParser,(req , res) => {
@@ -62,9 +77,11 @@ router.post('/change_pwd',urlencodedParser,(req , res) => {
     // TODO: need to get the permission from operation result.
     if( val === '0' || val === '1'){
       // change password code ...
-
+      accountOp.changepwd(username,new_pwd);
+      res.end();
     } else {
       console.log("error password");
+      res.send("error password");
     }
   })
   .catch((err) => {
