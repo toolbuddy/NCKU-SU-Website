@@ -125,7 +125,7 @@
           }
           const params = {
             username: document.getElementById('username').value,
-            password: pwd.value,
+            password: pwd,
             name: document.getElementById('name').value,
             email: document.getElementById('email').value
           }
