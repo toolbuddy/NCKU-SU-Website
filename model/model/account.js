@@ -30,7 +30,6 @@ module.exports = function(sequelize, DataTypes) {
 	account.hasMany(models.message, {foreignKey: 'studentId'});
 	account.belongsToMany(models.topNews, {through: models.collection, foreignKey: 'studentId'});
 	account.belongsToMany(models.message, {through: models.collection, foreignKey: 'studentId'});
-	account.hasMany(models.poll, {foreignKey: 'studentId'});
 	account.hasMany(models.proposal, {foreignKey: 'studentId'});
 	account.belongsToMany(models.proposal, {through: models.proposalAgree, foreignKey: 'studentId'});
 	account.hasMany(models.discuss, {foreignKey: 'studentId'});
@@ -46,7 +45,7 @@ module.exports = function(sequelize, DataTypes) {
       });
   };
   
-  account.verify = async function(input, hashed) {
+  account.verifyPwd = async function(input, hashed) {
       return bcrypt.compare(input, hashed);
   }
   
