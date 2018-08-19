@@ -45,7 +45,7 @@ module.exports = function(sequelize, DataTypes) {
       });
   };
   
-  account.verify = async function(input, hashed) {
+  account.verifyPwd = async function(input, hashed) {
       return bcrypt.compare(input, hashed);
   }
   
