@@ -26,7 +26,7 @@
         if (Math.ceil(parseInt(totalNumber.data) / 10) < parseInt(params.page) || parseInt(params.page) < 1) {
           throw params.page
         }
-        currentPagePosts = await axios('/api/getTopnews', {
+        currentPagePosts = await axios('/api/getMessage', {
           method: 'post',
           data: qs.stringify({ number: 10, offset: offsetNumber })
         })
