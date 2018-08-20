@@ -17,17 +17,26 @@
   export default {
     async asyncData ({ params, error }) {
       const offsetNumber = (parseInt(params.page) - 1) * 10
-      const currentPagePosts = await axios('/api/getMessage', {
-        method: 'post',
-        data: qs.stringify({ number: 10, offset: offsetNumber })
-      })
-      const totalNumber = await axios('/api/getMessageSum', {
-        method: 'post'
-      })
-      return {
-        articles: currentPagePosts.data,
-        total: parseInt(totalNumber.data),
-        currentPage: parseInt(params.page)
+      let totalNumber
+      let currentPagePosts
+      try {
+        totalNumber = await axios('/api/getMessageSum', {
+          method: 'post'
+        })
+        if (Math.ceil(parseInt(totalNumber.data) / 10) < parseInt(params.page) || parseInt(params.page) < 1) {
+          throw params.page
+        }
+        currentPagePosts = await axios('/api/getMessage', {
+          method: 'post',
+          data: qs.stringify({ number: 10, offset: offsetNumber })
+        })
+        return {
+          articles: currentPagePosts.data,
+          total: parseInt(totalNumber.data),
+          currentPage: parseInt(params.page)
+        }
+      } catch (e) {
+        error({ statusCode: 404, message: 'Page not found' })
       }
     },
     components: {
