@@ -8,8 +8,8 @@ const app = express();
 const post = require('./routes/post');
 const getMessage = require('./routes/getMessage');
 const getTopnews = require('./routes/getTopnews');
-const getMessageSum= require('./routes/getMessageSum');
-const getTopnewsSum= require('./routes/getTopnewsSum');
+const getMessageSum = require('./routes/getMessageSum');
+const getTopnewsSum = require('./routes/getTopnewsSum');
 // Config root path
 const path = require('path');
 global.rootPath = path.join(__dirname + '/../');

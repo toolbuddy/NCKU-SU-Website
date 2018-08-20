@@ -7,7 +7,7 @@ const ArticleOp = require('../../model/query/article.js');
 
 
 router.post('/getTopnews',urlencodedParser,(req , res) => {
-    let number = 10;
+    let number = parseInt(req.body.number);
     let offset = parseInt(req.body.offset);
     ArticleOp.getArticle(1,number,offset)
     .then((val) => {
