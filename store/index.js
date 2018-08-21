@@ -20,6 +20,7 @@ export const mutations = {
 }
 
 export const getters = {
+  getAuthUser: (state) => state.authUser,
   getModifyUser: (state) => state.modifyUser
 }
 
