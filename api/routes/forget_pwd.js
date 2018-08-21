@@ -28,6 +28,7 @@ router.post('/forget_pwd',urlencodedParser,(req , res) => {
       text: "驗證網址： " + 'http://localhost:3000/api/verify_forget_pwd?token=' + passkey
     }
     mail(options);
+    res.end();
   })
   .catch((err)=>{
     console.log(err);
@@ -50,15 +51,21 @@ router.get('/verify_forget_pwd',(req,res)=>{
   } else {
     // direct to change password
     console.log("success!!");
-    res.modify.username = user;
-    return res.redirect('../../account/verified_change_pwd');
+    // use session to keep modify username.
+    req.session.modify = {};
+    req.session.modify.username = user;
+    return res.redirect('../../account/changePassword');
   }
 })
 
-router.post('/verified_change_pwd',urlencodedParser,(req,res)=>{
-  const username = req.modify.username;
+router.post('/verified_change_pwd', urlencodedParser,(req,res)=>{
+  const username = req.body.username;
   const new_pwd = req.body.new_pwd;
   accountOp.changepwd(username,new_pwd);
+  // remove local cookie.
+  res.clearCookie('connect.sid');
+  // remove the server store cookie.
+  req.session.destroy();
   console.log("has changed password")
   res.end();
 })

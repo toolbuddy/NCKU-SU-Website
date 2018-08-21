@@ -7,13 +7,8 @@
 
 <script>
 export default {
-  methods: {
-    jump: function () {
-      this.$router.push('/')
-    }
-  },
   mounted () {
-    setTimeout(this.jump, 5000)
+    setTimeout(() => { this.$router.push('/') }, 5000)
   }
 }
 </script>
