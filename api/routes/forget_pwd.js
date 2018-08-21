@@ -28,6 +28,7 @@ router.post('/forget_pwd',urlencodedParser,(req , res) => {
       text: "驗證網址： " + 'http://localhost:3000/api/verify_forget_pwd?token=' + passkey
     }
     mail(options);
+    res.end();
   })
   .catch((err)=>{
     console.log(err);
@@ -50,8 +51,9 @@ router.get('/verify_forget_pwd',(req,res)=>{
   } else {
     // direct to change password
     console.log("success!!");
-    res.modify.username = user;
-    return res.redirect('../../account/verified_change_pwd');
+    res.locals.modify = {};
+    res.locals.modify.username = user;
+    return res.redirect('../../account/changePassowrd');
   }
 })
 

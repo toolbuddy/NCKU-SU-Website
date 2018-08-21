@@ -51,7 +51,7 @@ router.get('/verify',(req,res)=>{
     console.log("success!!");
   }
   // direct to registry
-  return res.redirect('../../account/registry');
+  return res.redirect('../../account/verification');
 })
 
 module.exports = router;
