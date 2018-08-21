@@ -17,7 +17,6 @@ function login(username, passwd) {
     attributes: ['password', 'permission']
   })
   .then( res => {
-    console.log(res)
     hashed = res.dataValues.password;
     return {
         perm: res.dataValues.permission,

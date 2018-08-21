@@ -51,10 +51,15 @@ router.get('/verify_forget_pwd',(req,res)=>{
   } else {
     // direct to change password
     console.log("success!!");
-    // use session to keep modify username.
-    req.session.modify = {};
-    req.session.modify.username = user;
-    return res.redirect('../../account/changePassword');
+    // use promise to prevent from data absence.
+    new Promise((resolve, reject) => {
+      // use session to keep modify username.
+      req.session.forget = {};
+      req.session.forget.username = user;
+      resolve(true);
+    }).then( result => {
+      return res.redirect('../../account/forget/modify');
+    })
   }
 })
 
