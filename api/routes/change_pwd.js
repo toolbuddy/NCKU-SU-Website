@@ -11,7 +11,7 @@ router.post('/change_pwd',urlencodedParser,(req , res) => {
   const username = req.body.username;
   const pwd = req.body.pwd;
   const new_pwd = req.body.new_pwd;
-
+  console.log(pwd)
   accountOp.login(username, pwd)
   .then(val => {
     /*
@@ -21,10 +21,14 @@ router.post('/change_pwd',urlencodedParser,(req , res) => {
      * -1 -> wrong username or password
      */
     // TODO: need to get the permission from operation result.
-    if( val === '0' || val === '1'){
+    if( val === 0 || val === 1){
       // change password
       accountOp.changepwd(username,new_pwd);
       console.log("has changed password");
+      // remove local cookie.
+      res.clearCookie('connect.sid');
+      // remove the server store cookie.
+      req.session.destroy();
       res.end();
     } else {
       console.log("error password");
