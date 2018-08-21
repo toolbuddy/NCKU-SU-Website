@@ -19,11 +19,11 @@ router.post('/login', urlencodedParser, (req, res) => {
     // TODO: need to get the permission from operation result.
     const result = {
       status: !(val==='-1'),    // only -1 represents login failure
-      authUser: val === '0' ? username : null,
-      isLogin: val === '0',
+      authUser: val !== '-1'  ? username : null,
+      isLogin: val !== '-1',
       role: val // permission role
     }
-    if (val == '0') {
+    if (val == '0' || val == '1') {
       // set session data
       req.session.authUser = username
       req.session.isLogin = true
