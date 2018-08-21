@@ -5,7 +5,7 @@ export const state = () => ({
   authUser: null,
   status: false,
   role: null,
-  modifyUser: null
+  forgetUser: null
 })
 
 export const mutations = {
@@ -14,31 +14,32 @@ export const mutations = {
     state.status = data.isLogin
     state.role = data.role
   },
-  SET_MODIFY_USER: (state, data) => {
-    state.modifyUser = data
+  SET_FORGET_USER: (state, data) => {
+    state.forgetUser = data
   }
 }
 
 export const getters = {
   getAuthUser: (state) => state.authUser,
-  getModifyUser: (state) => state.modifyUser
+  getForgetUser: (state) => state.forgetUser
 }
 
 export const actions = {
   nuxtServerInit ({commit}, {req}) {
+    console.log(req.session)
     if (req.session && req.session.isLogin) {
       commit('SET_USER', req.session)
     }
-    if (req.session && req.session.modify && req.session.modify) {
-      commit('SET_MODIFY_USER', req.session.modify.username)
+    if (req.session && req.session.forget && req.session.forget.username) {
+      commit('SET_FORGET_USER', req.session.forget.username)
     }
   },
   nuxtClientInit ({commit}, {req}) {
     if (req.session && req.session.isLogin) {
       commit('SET_USER', req.session)
     }
-    if (req.session && req.session.modify && req.session.modify) {
-      commit('SET_MODIFY_USER', req.session.modify.username)
+    if (req.session && req.session.forget && req.session.forget.username) {
+      commit('SET_FORGET_USER', req.session.forget.username)
     }
   },
   async login ({commit}, params) {

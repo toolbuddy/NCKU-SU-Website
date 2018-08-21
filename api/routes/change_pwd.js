@@ -21,6 +21,7 @@ router.post('/change_pwd',urlencodedParser,(req , res) => {
      * -1 -> wrong username or password
      */
     // TODO: need to get the permission from operation result.
+    console.log(typeof val)
     if( val === 0 || val === 1){
       // change password
       accountOp.changepwd(username,new_pwd);
