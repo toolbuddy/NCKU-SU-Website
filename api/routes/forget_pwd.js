@@ -51,16 +51,21 @@ router.get('/verify_forget_pwd',(req,res)=>{
   } else {
     // direct to change password
     console.log("success!!");
-    res.locals.modify = {};
-    res.locals.modify.username = user;
-    return res.redirect('../../account/changePassowrd');
+    // use session to keep modify username.
+    req.session.modify = {};
+    req.session.modify.username = user;
+    return res.redirect('../../account/changePassword');
   }
 })
 
-router.post('/verified_change_pwd',urlencodedParser,(req,res)=>{
-  const username = req.modify.username;
+router.post('/verified_change_pwd', urlencodedParser,(req,res)=>{
+  const username = req.body.username;
   const new_pwd = req.body.new_pwd;
   accountOp.changepwd(username,new_pwd);
+  // remove local cookie.
+  res.clearCookie('connect.sid');
+  // remove the server store cookie.
+  req.session.destroy();
   console.log("has changed password")
   res.end();
 })

@@ -4,7 +4,8 @@ import qs from 'querystring'
 export const state = () => ({
   authUser: null,
   status: false,
-  role: null
+  role: null,
+  modifyUser: null
 })
 
 export const mutations = {
@@ -12,7 +13,14 @@ export const mutations = {
     state.authUser = data.authUser
     state.status = data.isLogin
     state.role = data.role
+  },
+  SET_MODIFY_USER: (state, data) => {
+    state.modifyUser = data
   }
+}
+
+export const getters = {
+  getModifyUser: (state) => state.modifyUser
 }
 
 export const actions = {
@@ -20,10 +28,16 @@ export const actions = {
     if (req.session && req.session.isLogin) {
       commit('SET_USER', req.session)
     }
+    if (req.session && req.session.modify && req.session.modify) {
+      commit('SET_MODIFY_USER', req.session.modify.username)
+    }
   },
   nuxtClientInit ({commit}, {req}) {
     if (req.session && req.session.isLogin) {
       commit('SET_USER', req.session)
+    }
+    if (req.session && req.session.modify && req.session.modify) {
+      commit('SET_MODIFY_USER', req.session.modify.username)
     }
   },
   async login ({commit}, params) {
