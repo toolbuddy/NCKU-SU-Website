@@ -2,21 +2,25 @@ module.exports = function(sequelize, DataTypes){
 
   var proposal = sequelize.define('proposal', {
     title: {
-        type: DataTypes.STRING(64)
+      type: DataTypes.STRING(64)
     },
     content: {
-        type: DataTypes.TEXT
+      type: DataTypes.TEXT
     },
     threshold: {
-        type: DataTypes.INTEGER
+      type: DataTypes.INTEGER
     },
     currentVoter: {
-        type: DataTypes.INTEGER,
-        defaultValue: 0
+      type: DataTypes.INTEGER,
+      defaultValue: 0
     },
     closeDiscuss: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    browseStat: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
     }
 
   });
