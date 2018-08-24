@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
     content: {
       type: DataTypes.TEXT
     },
-    browsestat: {
+    browseStat: {
       type: DataTypes.INTEGER,
       defaultValue: 0
     }
