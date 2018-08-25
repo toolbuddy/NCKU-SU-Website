@@ -1,4 +1,5 @@
 module.exports = (sequelize, DataTypes) => {
+<<<<<<< HEAD
   var topNews= sequelize.define('topNews', {
     title: {
       type: DataTypes.STRING
