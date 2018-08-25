@@ -5,11 +5,15 @@ const app = express();
 
 // Require API routes
 const users = require('./routes/test');
-const login = require('./routes/login');
+const getProposal = require('./routes/getProposal');
+const ProposalSum = require('./routes/ProposalSum');
+const saveProposal = require('./routes/saveProposal');
 
 // Import API Routes
 app.use(users);
-app.use(login);
+app.use(getProposal);
+app.use(ProposalSum);
+app.use(saveProposal);
 
 // Export the server middleware
 module.exports = {
