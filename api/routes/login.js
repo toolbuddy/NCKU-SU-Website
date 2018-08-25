@@ -1,6 +1,7 @@
 const { Router } = require('express')
 
 const router = Router()
+const loginOperation = require('../../model/query/login.js')
 var bodyParser = require('body-parser');
 var urlencodedParser = bodyParser.urlencoded({ extended: false});
 
@@ -9,15 +10,15 @@ router.post('/user', urlencodedParser, (req, res) => {
     let username = req.body.username;
     let pwd = req.body.password;
     let status;
-    if( username == "F74052154" && pwd == "123456"){
-      status = "0"; //CORRECT
-    }
-    else if(username == "F74052154" && pwd != "123456"){
-      status = "1"; //PASSWORD ERROR
-    }else{
-      status = "2"; //has no username
-    }
-    res.send(status);
+
+    loginOperation.login(username, pwd)
+    .then( val =>{
+        // 0 -> success
+        // 1 -> wrong password
+        // 2 -> wrong account
+        res.send(val);
+    });
+
 })
 
 /* GET developer by ID. */
