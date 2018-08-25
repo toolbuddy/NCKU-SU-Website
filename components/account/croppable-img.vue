@@ -1,12 +1,14 @@
 <template>
-  <div class="croppable">
-    <img v-bind:src="src" class="image" />
-    <div class="resizeable" contenteditable="false" v-on:mousedown="startMoving">
-        <span class="resize-handle-nw" v-on:mousedown="startResize"/>
-        <span class="resize-handle-sw" v-on:mousedown="startResize"/>
-        <span class="resize-handle-ne" v-on:mousedown="startResize"/>
-        <span class="resize-handle-se" v-on:mousedown="startResize"/>
-    </div>
+  <div>
+    <div class="croppable" v-bind:style="viewStyle">
+      <img v-bind:src="src" class="image" v-on:mousedown="startMoving "/>
+      <div class="overlay" v-bind:style="[viewStyle, limitStyle, overlayStyle]">
+        <span class="circle"></span>
+      </div>
+    </div> <br/>
+    <div v-bind:style="{width: `${this.viewSize}px`}" >
+      <input type="range" min=0 max="100" value="50" class="slider" v-on:input="resizing" v-on:mousedown="startResize">
+    </div> <br/>
     <button v-on:click="crop"> 裁切 </button>
   </div>
 </template>
@@ -16,6 +18,8 @@ export default {
   name: 'croppable-img',
   props: {
     src: String,
+    viewSize: Number,
+    cutSize: Number,
     file: null
   },
   data () {
@@ -24,21 +28,59 @@ export default {
       targetImg: null,
       eventState: {},
       constrain: false,
-      minWidth: 200,
-      minHeight: 200,
-      maxWidth: 400,
-      maxHeight: 400,
+      originWidth: 0,
+      originHeight: 0,
+      resizedWidth: 0,
+      resizedHeight: 0,
       resizeCanvas: document.createElement('canvas'),
-      resizeDom: null
+      resizeSlider: null,
+      viewStyle: {
+        width: `${this.viewSize}px`,
+        height: `${this.viewSize}px`
+      },
+      limitStyle: {
+        maxWidth: `${this.viewSize}px`,
+        maxHeight: `${this.viewSize}px`
+      },
+      cutStyle: {
+        width: `${this.cutSize}px`,
+        height: `${this.cutSize}px`
+      },
+      overlayStyle: {
+        background: `radial-gradient(circle at center, transparent ${this.cutSize / 2 - 2}px,  antiquewhite ${this.cutSize / 2 + 2}px, rgba(0, 0, 0, 0.5) ${this.cutSize / 2}px)`
+      }
     }
   },
   mounted () {
     this.targetImg = this.$el.querySelector('img')
     this.originImg.src = this.targetImg.src
     this.targetImg.file = this.file
-    this.resizeDom = this.$el.querySelector('.resizeable')
-    this.resizeCanvas.width = 200
-    this.resizeCanvas.height = 200
+    this.resizeCanvas.width = this.cutSize
+    this.resizeCanvas.height = this.cutSize
+    this.resizeSlider = this.$el.querySelector('input')
+    // read the natural/client width and height by using promise
+    new Promise((resolve, reject) => {
+      const target = this.targetImg
+      const callback = function () {
+        const nw = this.naturalWidth
+        const nh = this.naturalHeight
+        const rw = this.clientWidth
+        const rh = this.clientHeight
+        target.removeEventListener('load', this)
+        resolve({
+          naturalWidth: nw,
+          naturalHeight: nh,
+          resizedWidth: rw,
+          resizedHeight: rh
+        })
+      }
+      this.targetImg.addEventListener('load', callback)
+    }).then(result => {
+      this.originWidth = result.naturalWidth
+      this.originHeight = result.naturalHeight
+      this.resizedWidth = result.resizedWidth
+      this.resizedHeight = result.resizedHeight
+    })
   },
   methods: {
     startMoving: function (e) {
@@ -52,21 +94,17 @@ export default {
       document.addEventListener('mouseup', this.endMoving)
     },
     startResize: function (e) {
-      // disable the default event action and do not delegate any event.
-      e.preventDefault()
-      e.stopPropagation()
       // save the current event state
       this.saveEventState(e)
       // add the event.
-      document.addEventListener('mousemove', this.resizing)
-      document.addEventListener('mouseup', this.endResize)
+      document.removeEventListener('mousedown', this.startResize)
     },
     saveEventState: function (e) {
       // Save the initial event details and container state
-      this.eventState.containerWidth = this.resizeDom.clientWidth
-      this.eventState.containerHeight = this.resizeDom.clientHeight
-      this.eventState.containerLeft = this.resizeDom.offsetLeft
-      this.eventState.containerTop = this.resizeDom.offsetTop
+      this.eventState.containerWidth = this.targetImg.clientWidth
+      this.eventState.containerHeight = this.targetImg.clientHeight
+      this.eventState.containerLeft = this.targetImg.offsetLeft
+      this.eventState.containerTop = this.targetImg.offsetTop
       this.eventState.mouse_x = (e.clientX || e.pageX || e.touches[0].clientX) + document.body.scrollLeft
       this.eventState.mouse_y = (e.clientY || e.pageY || e.touches[0].clientY) + document.body.scrollTop
       // This is a fix for mobile safari
@@ -89,37 +127,41 @@ export default {
       // get the mouse x, y location.
       mouse.x = (e.clientX || e.pageX || e.touches[0].clientX) + document.body.scrollLeft
       mouse.y = (e.clientY || e.pageY || e.touches[0].clientY) + document.body.scrollTop
-      console.log('mouse.x : ' + mouse.x)
-      console.log('mouse.y : ' + mouse.y)
-      this.resizeDom.setAttribute('style',
-        `left: ${mouse.x - this.resizeCanvas.width / 2}px; 
-         top: ${mouse.y - this.resizeCanvas.height / 2}px;
-         width: ${this.resizeCanvas.width}px;
-         height: ${this.resizeCanvas.height}px;`)
+
+      const newMarginLeft = this.eventState.containerLeft + mouse.x - this.eventState.mouse_x
+      const newMarginTop = this.eventState.containerTop + mouse.y - this.eventState.mouse_y
+      // moving on x direction if the current image width  is larger than cut size
+      if (this.targetImg.clientWidth > this.cutSize) {
+        if (newMarginLeft < (this.viewSize - this.cutSize) / 2 &&
+          newMarginLeft + this.targetImg.clientWidth > (this.viewSize + this.cutSize) / 2) {
+          this.targetImg.style.marginLeft = `${newMarginLeft}px`
+        }
+      }
+      // moving on y direction if the current image height is larger than cut size
+      if (this.targetImg.clientHeight > this.cutSize) {
+        if (newMarginTop < (this.viewSize - this.cutSize) / 2 &&
+          newMarginTop + this.targetImg.clientHeight > (this.viewSize + this.cutSize) / 2) {
+          this.targetImg.style.marginTop = `${newMarginTop}px`
+        }
+      }
     },
     resizing: function (e) {
-      let mouse = {}
-      let width = 0
-      let height = 0
-      // get the mouse x, y location.
-      mouse.x = (e.clientX || e.pageX || e.touches[0].clientX) + document.body.scrollLeft
-      mouse.y = (e.clientY || e.pageY || e.touches[0].clientY) + document.body.scrollTop
-      // according to the handler, compute the relative width and height change.
-      if (this.eventState.event.target.classList.contains('resize-handle-se')) {
-        width = mouse.x - this.eventState.containerLeft
-      } else if (this.eventState.event.target.classList.contains('resize-handle-sw')) {
-        width = this.eventState.containerWidth - (mouse.x - this.eventState.containerLeft)
-      } else if (this.eventState.event.target.classList.contains('resize-handle-nw')) {
-        width = this.eventState.containerWidth - (mouse.x - this.eventState.containerLeft)
-      } else if (this.eventState.event.target.classList.contains('resize-handle-ne')) {
-        width = mouse.x - this.eventState.containerLeft
+      // compute the new width and height
+      const ratio = 0.01 * Math.pow(this.resizeSlider.value, 2) + 0.5 * this.resizeSlider.value + 50
+      const newWidth = Math.max(this.resizedWidth * ratio / 100, this.cutSize)
+      const newHeight = Math.max(this.resizedHeight * ratio / 100, this.cutSize)
+      // resize the image if newHeight larger than cut size
+      if (newHeight > this.cutSize) {
+        this.targetImg.style.width = `${newWidth}px`
+        this.targetImg.style.height = `${newHeight}px`
       }
-      height = width
-      // if the image is in limit range.
-      if (width > this.minWidth && height > this.minHeight &&
-        width < this.maxWidth && height < this.maxHeight) {
-        this.resizeImage(width, height)
-      }
+      // correct the margin
+      let newMarginLeft = (this.cutSize - this.eventState.containerLeft) / this.eventState.containerWidth * this.targetImg.clientWidth * -1 + this.cutSize
+      let newMarginTop = (this.cutSize - this.eventState.containerTop) / this.eventState.containerHeight * this.targetImg.clientHeight * -1 + this.cutSize
+      newMarginLeft = Math.min(newMarginLeft, (this.viewSize - this.cutSize) / 2)
+      newMarginTop = Math.min(newMarginTop, (this.viewSize - this.cutSize) / 2)
+      this.targetImg.style.marginLeft = `${newMarginLeft}px`
+      this.targetImg.style.marginTop = `${newMarginTop}px`
     },
     endMoving: function (e) {
       // disable the default event action and do not delegate any event.
@@ -134,22 +176,18 @@ export default {
       // remove the event.
       document.removeEventListener('mousemove', this.resizing)
       document.removeEventListener('mouseup', this.endResize)
-      // get the resized information.
-      // this.getResizedImageFile()
-    },
-    resizeImage: function (width, height) {
-      // use canvas to draw the image.
-      this.resizeCanvas.width = width
-      this.resizeCanvas.height = height
-      this.resizeDom.style.width = `${this.resizeCanvas.width}px`
-      this.resizeDom.style.height = `${this.resizeCanvas.height}px`
     },
     crop: function () {
-      let targetLeft = this.resizeDom.offsetLeft - this.$el.offsetLeft
-      let targetTop = this.resizeDom.offsetTop - this.$el.offsetTop
-
-      this.resizeCanvas.getContext('2d').drawImage(this.originImg, targetLeft, targetTop,
-        this.resizeCanvas.width, this.resizeCanvas.height, 0, 0, this.resizeCanvas.width, this.resizeCanvas.height)
+      let targetLeft = ((this.viewSize - this.cutSize) / 2 - this.targetImg.offsetLeft) * this.originWidth / this.targetImg.clientWidth
+      let targetTop = ((this.viewSize - this.cutSize) / 2 - this.targetImg.offsetTop) * this.originHeight / this.targetImg.clientHeight
+      const width = this.cutSize * this.originWidth / this.targetImg.clientWidth
+      const height = this.cutSize * this.originHeight / this.targetImg.clientHeight
+      console.log(targetLeft)
+      console.log(targetTop)
+      console.log(width)
+      console.log(height)
+      this.resizeCanvas.getContext('2d').drawImage(this.targetImg, targetLeft, targetTop,
+        width, height, 0, 0, this.resizeCanvas.width, this.resizeCanvas.height)
       window.open(this.resizeCanvas.toDataURL('image/*'))
     },
     getCroppedImageFile: function () {
@@ -172,54 +210,58 @@ export default {
 </script>
 
 <style scoped>
-  .resizeable {
-    position: fixed;
-    z-index: 999;
-    width: 200px;
-    height: 200px;
-    border: solid 2px rgba(222,60,80,.9);
-    box-sizing: content-box;
-    resize: both;
-    cursor: all-scroll;
+  .croppable {
+    position:relative;
+    background-color: lightsteelblue;
+    overflow: hidden;
   }
-
-  .resizeable:hover, .resizeable:active {
-    outline: 1px dashed #333;
-  }
-  .resizeable:hover .resize-handle-ne, 
-  .resizeable:active .resize-handle-ne, 
-  .resizeable:hover .resize-handle-se, 
-  .resizeable:active .resize-handle-se, 
-  .resizeable:hover .resize-handle-nw, 
-  .resizeable:active .resize-handle-nw, 
-  .resizeable:hover .resize-handle-sw,
-  .resizeable:active .resize-handle-sw  { 
+  .overlay {
     position: absolute;
     display: block;
-    width: 6px;
-    height: 6px;
-    background-color: #333;
+    top: 0;
+    left: 0;
     z-index: 999;
-  }
-  .resize-handle-nw {
-    top: -3px;
-    left: -3px;
-    cursor: nw-resize;
-  }
-  .resize-handle-sw {
-    bottom: -3px;
-    left: -3px;
-    cursor: sw-resize;
+    pointer-events: none;
   }
   
-  .resize-handle-ne {
-    top: -3px;
-    right: -3px;
-    cursor: ne-resize;
+
+  .image {
+    height: 100%;
+    cursor: all-scroll;
+    transform-origin: center;
   }
-  .resize-handle-se {
-    bottom: -3px;
-    right: -3px;
-    cursor: se-resize;
+
+  .slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 15px;
+    border-radius: 5px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+  }
+
+  .slider:hover {
+    opacity: 1;
+  }
+
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
+  }
+
+  .slider::-moz-range-thumb {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    background: #4CAF50;
+    cursor: pointer;
   }
 </style>
