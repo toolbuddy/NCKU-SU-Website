@@ -37,6 +37,8 @@
                 const insertImg = new CroppableImgCtor({
                   propsData: {
                     src: url,
+                    viewSize: 400,
+                    cutSize: 200,
                     file: target
                   }
                 })
