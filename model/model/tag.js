@@ -7,5 +7,11 @@ module.exports = function(sequelize, DataTypes) {
         timestamps: false
     });
 
+		tag.associate = function(models) {
+			tag.belongsToMany(models.proposal, {through: models.proposalTag, foreignKey: 'tagId'});
+			tag.belongsToMany(models.message, {through: models.articleTag, foreignKey: 'tagId'});
+			tag.belongsToMany(models.topNews, {through: models.articleTag, foreignKey: 'tagId'});
+		}
+
     return tag;
 };
