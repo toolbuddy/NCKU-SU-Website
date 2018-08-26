@@ -62,3 +62,5 @@ router.post('/uploadFile', urlencodedParser, (req, res) => {
       res.end();
     });
 });
+
+module.exports = router ;

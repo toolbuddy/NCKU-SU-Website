@@ -10,6 +10,8 @@ const getMessage = require('./routes/getMessage');
 const getTopnews = require('./routes/getTopnews');
 const Message_sum= require('./routes/Message_sum');
 const Topnews_sum= require('./routes/Topnews_sum');
+const uploadFile = require('./routes/uploadFile');
+
 // Config root path
 const path = require('path');
 global.rootPath = path.join(__dirname + '/../');
@@ -20,6 +22,8 @@ app.use(getMessage);
 app.use(getTopnews);
 app.use(Message_sum);
 app.use(Topnews_sum);
+app.use(uploadFile);
+
 app.use(bodyParser.urlencoded({ extended: false }))
 
 // Export the server middleware
