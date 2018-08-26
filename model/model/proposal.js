@@ -23,7 +23,7 @@ module.exports = function(sequelize, DataTypes){
     proposal.belongsToMany(models.account, {through: 'proposalAgree', foreignKey: 'proposalId'});
     proposal.belongsToMany(models.tag, {through: 'proposalTag', foreignKey: 'proposalId'});
     proposal.belongsTo(models.proposalClass, {foreignKey: 'classId'});
-    proposal.hasMany(models.discuss, {foreignKey: 'proposalId'});
+    proposal.hasMany(models.discuss, {foreignKey: 'parentId'});
   };
   return proposal;
   
