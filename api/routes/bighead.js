@@ -46,7 +46,7 @@ router.post('/bighead', urlencodedParser, (req, res) => {
         const targetPath = rootPath + 'static/uploads/bighead/' + fields.title + '_' + number
           + '/photo/' + uploadedFile.name
         // add the attachment file path to uploadedPath.
-        uploadedFilePath.push('/uploads/bidhead/' + fields.title + '_' + number
+        uploadedFilePath.push('/uploads/bighead/' + fields.title + '_' + number
         + '/photo/' + uploadedFile.name)
         // save the uploaded image.
         fs.rename(tmpPath, targetPath, function(err) {
