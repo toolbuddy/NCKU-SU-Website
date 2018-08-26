@@ -18,6 +18,10 @@ module.exports = function(sequelize, DataTypes){
     closeDiscuss: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
+    },
+    browseStat: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
     }
   });
 

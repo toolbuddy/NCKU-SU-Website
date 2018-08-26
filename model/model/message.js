@@ -5,6 +5,10 @@ module.exports = (sequelize, DataTypes) => {
     },
     content: {
       type: DataTypes.TEXT
+    },
+    browseStat: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
     }
   });
 
