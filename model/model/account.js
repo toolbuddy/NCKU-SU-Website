@@ -40,16 +40,16 @@ module.exports = function(sequelize, DataTypes) {
   }
   
   account.hashFunc = async function(passwd) {
-      return new Promise((resolve, reject) => {
-          bcrypt.hash(passwd, 10)
-          .then(hash => {
-              resolve(hash);
-          })
-      });
+    return new Promise((resolve, reject) => {
+      bcrypt.hash(passwd, 10)
+      .then(hash => {
+        resolve(hash);
+      })
+    });
   };
   
   account.verifyPwd = async function(input, hashed) {
-      return bcrypt.compare(input, hashed);
+    return bcrypt.compare(input, hashed);
   }
   
   return account;

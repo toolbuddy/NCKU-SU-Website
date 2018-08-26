@@ -7,14 +7,17 @@ module.exports = function(sequelize, DataTypes){
     content: {
         type: DataTypes.TEXT
     },
-    needVoter: {
-        type: DataTypes.INTEGER
+    threshold: {
+        type: DataTypes.INTEGER,
+        defaultValue: 9999999
     },
     currentVoter: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     },
     closeDiscuss: {
-        type: DataTypes.BOOLEAN
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     }
   });
 
