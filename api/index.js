@@ -8,10 +8,9 @@ const app = express();
 const post = require('./routes/post');
 const getMessage = require('./routes/getMessage');
 const getTopnews = require('./routes/getTopnews');
-const Message_sum= require('./routes/Message_sum');
-const Topnews_sum= require('./routes/Topnews_sum');
 const uploadFile = require('./routes/uploadFile');
-
+const getMessageSum = require('./routes/getMessageSum');
+const getTopnewsSum = require('./routes/getTopnewsSum');
 // Config root path
 const path = require('path');
 global.rootPath = path.join(__dirname + '/../');
@@ -20,9 +19,9 @@ global.rootPath = path.join(__dirname + '/../');
 app.use(post);
 app.use(getMessage);
 app.use(getTopnews);
-app.use(Message_sum);
-app.use(Topnews_sum);
 app.use(uploadFile);
+app.use(getMessageSum);
+app.use(getTopnewsSum);
 
 app.use(bodyParser.urlencoded({ extended: false }))
 
