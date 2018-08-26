@@ -9,7 +9,6 @@
     <div v-bind:style="{width: `${this.viewSize}px`}" >
       <input type="range" min=0 max="100" value="50" class="slider" v-on:input="resizing" v-on:mousedown="startResize">
     </div> <br/>
-    <button v-on:click="crop"> 裁切 </button>
   </div>
 </template>
 
@@ -58,31 +57,35 @@ export default {
     this.resizeCanvas.width = this.cutSize
     this.resizeCanvas.height = this.cutSize
     this.resizeSlider = this.$el.querySelector('input')
-    // read the natural/client width and height by using promise
-    new Promise((resolve, reject) => {
-      const target = this.targetImg
-      const callback = function () {
-        const nw = this.naturalWidth
-        const nh = this.naturalHeight
-        const rw = this.clientWidth
-        const rh = this.clientHeight
-        target.removeEventListener('load', this)
-        resolve({
-          naturalWidth: nw,
-          naturalHeight: nh,
-          resizedWidth: rw,
-          resizedHeight: rh
-        })
-      }
-      this.targetImg.addEventListener('load', callback)
-    }).then(result => {
-      this.originWidth = result.naturalWidth
-      this.originHeight = result.naturalHeight
-      this.resizedWidth = result.resizedWidth
-      this.resizedHeight = result.resizedHeight
-    })
+    // read the natural/client width and height
+    this.getBasicInfo()
   },
   methods: {
+    getBasicInfo: function () {
+      // read the natural/client width and height by using promise
+      new Promise((resolve, reject) => {
+        const target = this.targetImg
+        const callback = function () {
+          const nw = this.naturalWidth
+          const nh = this.naturalHeight
+          const rw = this.clientWidth
+          const rh = this.clientHeight
+          target.removeEventListener('load', this)
+          resolve({
+            naturalWidth: nw,
+            naturalHeight: nh,
+            resizedWidth: rw,
+            resizedHeight: rh
+          })
+        }
+        this.targetImg.addEventListener('load', callback)
+      }).then(result => {
+        this.originWidth = result.naturalWidth
+        this.originHeight = result.naturalHeight
+        this.resizedWidth = result.resizedWidth
+        this.resizedHeight = result.resizedHeight
+      })
+    },
     startMoving: function (e) {
       // disable the default event action and do not delegate any event.
       e.preventDefault()
@@ -166,6 +169,8 @@ export default {
     endMoving: function (e) {
       // disable the default event action and do not delegate any event.
       e.preventDefault()
+      // save the current event state
+      this.saveEventState(e)
       // remove the event.
       document.removeEventListener('mousemove', this.moving)
       document.removeEventListener('mouseup', this.endMoving)
@@ -173,6 +178,8 @@ export default {
     endResize: function (e) {
       // disable the default event action and do not delegate any event.
       e.preventDefault()
+      // save the current event state
+      this.saveEventState(e)
       // remove the event.
       document.removeEventListener('mousemove', this.resizing)
       document.removeEventListener('mouseup', this.endResize)
@@ -182,18 +189,11 @@ export default {
       let targetTop = ((this.viewSize - this.cutSize) / 2 - this.targetImg.offsetTop) * this.originHeight / this.targetImg.clientHeight
       const width = this.cutSize * this.originWidth / this.targetImg.clientWidth
       const height = this.cutSize * this.originHeight / this.targetImg.clientHeight
-      console.log(targetLeft)
-      console.log(targetTop)
-      console.log(width)
-      console.log(height)
       this.resizeCanvas.getContext('2d').drawImage(this.targetImg, targetLeft, targetTop,
         width, height, 0, 0, this.resizeCanvas.width, this.resizeCanvas.height)
-      window.open(this.resizeCanvas.toDataURL('image/*'))
+      return this.resizeCanvas.toDataURL('image/*')
     },
     getCroppedImageFile: function () {
-      this.resizeCanvas.getContext('2d').drawImage(this.originImg, 0, 0,
-        this.resizeCanvas.width, this.resizeCanvas.height)
-      this.targetImg.setAttribute('src', this.resizeCanvas.toDataURL('image/*'))
       // get the Blob file of the canvas image.
       const dataURL = this.resizeCanvas.toDataURL('image/*')
       const blobBin = atob(dataURL.split(',')[1])

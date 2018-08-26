@@ -5,6 +5,10 @@
     <label> 帳號 username </label><input type="text" id="username"/> <br/>
     <label> 密碼 password </label><input type="password" id="pwd"/> <br/>
     <label> 確認密碼 check password </label><input type="password" id="checkpwd"> <br/>
+    <hr>
+    <label> 上傳頭貼 upload image </label> <br/>
+    <input id="imageUploader" v-on:change="handleFile" type="file" accept="image/*"/> <br/>
+    <hr>
     <label> 姓名 name </label><input type="text" id="name"/> <br/>
     <label> 學院 college </label> <select v-model="selected"> 
       <option v-bind:value="'AN'"> 不分系 </option>
@@ -98,12 +102,25 @@
 <script>
   import axios from '~/plugins/axios'
   import qs from 'qs'
+  import Vue from 'vue'
+  import CroppableImg from '~/components/account/croppable-img.vue'
+
+  const CroppableImgCtor = Vue.extend(CroppableImg)
 
   export default {
     data () {
       return {
-        selected: 'AN'
+        selected: 'AN',
+        imageUploader: null,
+        croppableImage: null,
+        cutButton: null
       }
+    },
+    components: {
+      CroppableImg
+    },
+    mounted () {
+      this.imageUploader = this.$el.querySelector('#imageUploader')
     },
     methods: {
       registry: function () {
@@ -136,6 +153,59 @@
             console.log(err)
           })
         }
+      },
+      handleFile: function () {
+        // get the files.
+        const files = this.imageUploader.files
+        const number = files.length
+        if (number !== 0) {
+          const target = files[0]
+          // check the file type is image.
+          if (target.type.match('image.*')) {
+            // use FileReader read the image.
+            const fileReader = new FileReader()
+            fileReader.onload = (fileLoadedEvent) => {
+              // create the object url
+              const url = window.URL.createObjectURL(target)
+              // insert the image
+              const insertImg = new CroppableImgCtor({
+                propsData: {
+                  src: url,
+                  viewSize: 400,
+                  cutSize: 200,
+                  file: target
+                }
+              })
+              // create mount object if the croppableImage is null
+              if (this.croppableImage === null) {
+                this.imageUploader.insertAdjacentHTML('afterend', '<span id="imageMount"></span>')
+                const imageMount = this.$el.querySelector('#imageMount')
+                // insert preview and button
+                imageMount.insertAdjacentHTML('afterend', '<button id="cut"> 裁剪 </button> <br/> <img class="preview"/>')
+                // set the reference of croppable image div.
+                this.croppableImage = insertImg.$mount(imageMount)
+                // add event on cut button
+                const cutButton = this.$el.querySelector('#cut')
+                cutButton.addEventListener('click', this.previewImage)
+              } else {
+                // mount the croppable on original image div.
+                this.croppableImage = insertImg.$mount(this.croppableImage.$el)
+                // reset the preview image src
+                this.$el.querySelector('.preview').setAttribute('src', '')
+              }
+              // revoke the object url
+              window.URL.revokeObjectURL(target)
+            }
+            fileReader.readAsDataURL(target)
+          }
+        }
+      },
+      previewImage: function () {
+        // get the cropped image
+        const imageUrl = this.croppableImage.crop()
+        this.$el.querySelector('.preview').src = imageUrl
+        // get the cropped image file
+        this.croppableImage.getCroppedImageFile()
       },
       valValidation: function (str) {
         const regExp = /^[\d|a-zA-Z]+$/
