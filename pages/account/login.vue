@@ -8,6 +8,7 @@
       <br/>
       <button type="button" v-on:click="submit"> 登入 Login </button>
     </form>
+    <router-link v-bind:to="{path: '/account/forget'}"> 忘記密碼？ </router-link>
   </div>
 </template>
 
@@ -29,7 +30,7 @@
           // TODO: error action.
           return
         }
-        // login code here...   
+        // login code here...
         const params = {
           username: user,
           password: pwd
