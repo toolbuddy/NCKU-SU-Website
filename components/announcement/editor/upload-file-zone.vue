@@ -10,7 +10,9 @@
     <section>
       <label v-if="files.length === 0">目前尚無任何附加檔案</label>
       <div v-for="(file, index) in files" v-bind:key="index" class="fileColumn">
-        <img v-bind:class="[`preview_${index}`]"/>
+        <figure v-bind:class="[`preview_${index}`]">
+          <img/>
+        </figure>
         <div class="overlay">
           <label>{{ file.name }}</label>
           <i class="fas fa-times remove" v-on:click="removeFile(index)"></i>
@@ -100,11 +102,16 @@ export default {
             reader.onload = (e) => {
               // create the object url
               const url = window.URL.createObjectURL(ele)
-              target.src = url
+              target.querySelector('img').src = url
             }
             reader.readAsDataURL(ele)
           } else {
-            target.src = '~/assets/img/file.png'
+            // TODO: change to use font awesome icon.
+            target.classList.add('fas')
+            target.classList.add('fa-file')
+            target.classList.add('fa-5x')
+            // target.insertAdjacentHTML('beforebegin', '<i class="fas fa-file fa-8x" aria-hidden="true"> </i>')
+            // target.src = '~/assets/img/file-icon.png'
           }
         }
       })
@@ -197,10 +204,21 @@ export default {
     padding: 10px;
     overflow: hidden;
     border: 1px solid #ddd;
-    font-size: 12px;
   }
 
-  .fileColumn img {
+  .fileColumn figure {
+    display: block;
+    height: 100px;
+    width: 100px;
+    line-height: 100px;
+    text-align: center;
+    color: gray;
+    object-fit: cover; /* Do not scale the image */
+    object-position: center; /* Center the image within the element */
+    margin: auto;
+    border-radius: 15px;
+  }
+  .fileColumn figure img {
     display: block;
     height: 100px;
     width: 100px;
@@ -230,18 +248,18 @@ export default {
 
   .overlay label {
     position: absolute;
-    top: 80px;
+    top: 70px;
     width: 100px;
-    height: 16px;
+    height: 20px;
     overflow: hidden;
+    font-size: 16px;
     text-align: center;
-    color: white;
-    opacity: 0;
+    color: black;
     transition: .3s ease;
   }
 
   .fileColumn:hover .overlay label {
-    opacity: 1;
+    color: white;
   }
 
   .overlay i {
