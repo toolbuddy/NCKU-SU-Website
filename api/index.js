@@ -11,6 +11,9 @@ const registry = require('./routes/registry');
 const forget_pwd = require('./routes/forget_pwd');
 const change_pwd = require('./routes/change_pwd');
 const bighead = require('./routes/bighead');
+// Config root path
+const path = require('path');
+global.rootPath = path.join(__dirname + '/../');
 
 // Import API Routes
 app.use(users);

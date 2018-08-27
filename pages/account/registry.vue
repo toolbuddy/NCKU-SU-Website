@@ -10,7 +10,7 @@
     <input id="imageUploader" v-on:change="handleFile" type="file" accept="image/*"/> <br/>
     <hr>
     <label> 姓名 name </label><input type="text" id="name"/> <br/>
-    <label> 學院 college </label> <select v-model="selected"> 
+    <label> 學院 college </label> <select v-model="selectedCollege"> 
       <option v-bind:value="'AN'"> 不分系 </option>
       <option v-bind:value="'LA'"> 文學院 </option>
       <option v-bind:value="'SC'"> 理學院 </option>
@@ -22,29 +22,29 @@
       <option v-bind:value="'LS'"> 生命科學學院 </option>
       <option v-bind:value="'ME'"> 醫學院 </option>
     </select> <br/>
-    <section v-if="this.selected !== 'AN'"> 
+    <section v-if="this.selectedCollege !== 'AN'"> 
       <label> 學系 department </label> 
-      <select id="department" v-if="this.selected === 'LA'">
+      <select id="department" v-if="this.selectedCollege === 'LA'" v-model="selectedDepartment">
         <option v-bind:value="'B1'"> 中國文學系 B1 </option>
         <option v-bind:value="'B2'"> 外國語文學系 B2 </option>
         <option v-bind:value="'B3'"> 歷史學系 B3 </option>
         <option v-bind:value="'B5'"> 台灣文學系 B5 </option>
       </select> 
-      <select id="department" v-if="this.selected === 'SC'">
+      <select id="department" v-if="this.selectedCollege === 'SC'" v-model="selectedDepartment">
         <option v-bind:value="'C1'"> 數學系 C1 </option>
         <option v-bind:value="'C2'"> 物理學系 C2 </option>
         <option v-bind:value="'C3'"> 化學系 C3 </option>
         <option v-bind:value="'C4'"> 地球科學系 C4 </option>
         <option v-bind:value="'F8'"> 光電科學與工程學系 F8 </option>
       </select> 
-      <select id="department" v-if="this.selected === 'MA'">
+      <select id="department" v-if="this.selectedCollege === 'MA'" v-model="selectedDepartment">
         <option v-bind:value="'H1'"> 會計學系 H1 </option>
         <option v-bind:value="'H2'"> 統計學系 H2 </option>
         <option v-bind:value="'H3'"> 工業資訊管理學系 H3 </option>
         <option v-bind:value="'H4'"> 企業管理學系 H4 </option>
         <option v-bind:value="'H5'"> 交通管理科學系 H5 </option>
       </select> 
-      <select id="department" v-if="this.selected === 'EN'">
+      <select id="department" v-if="this.selectedCollege === 'EN'" v-model="selectedDepartment">
         <option v-bind:value="'E1'"> 機械工程學系 E1 </option>
         <option v-bind:value="'E3'"> 化學工程學系 E3 </option>
         <option v-bind:value="'E4'"> 資源工程學系 E4 </option>
@@ -59,26 +59,26 @@
         <option v-bind:value="'F6'"> 測量及空間資訊學系 F6 </option>
         <option v-bind:value="'F9'"> 生物醫學工程學系 F9 </option>
       </select> 
-      <select id="department" v-if="this.selected === 'EE'">
+      <select id="department" v-if="this.selectedCollege === 'EE'" v-model="selectedDepartment">
         <option v-bind:value="'E2'"> 電機工程學系 E2 </option>
         <option v-bind:value="'F7'"> 資訊工程學系 F7 </option>
       </select> 
-      <select id="department" v-if="this.selected === 'SO'">
+      <select id="department" v-if="this.selectedCollege === 'SO'" v-model="selectedDepartment">
         <option v-bind:value="'D2'"> 法律學系 D2 </option>
         <option v-bind:value="'D4'"> 政治學系 D4 </option>
         <option v-bind:value="'D5'"> 經濟學系 D5 </option>
         <option v-bind:value="'D8'"> 心理學系 D8 </option>
       </select> 
-      <select id="department" v-if="this.selected === 'PD'">
+      <select id="department" v-if="this.selectedCollege === 'PD'" v-model="selectedDepartment">
         <option v-bind:value="'E7'"> 建築學系 E7 </option>
         <option v-bind:value="'F2'"> 都市計劃學系 F2 </option>
         <option v-bind:value="'F3'"> 工業設計學系 F3 </option>
       </select> 
-      <select id="department" v-if="this.selected === 'LS'">
+      <select id="department" v-if="this.selectedCollege === 'LS'" v-model="selectedDepartment">
         <option v-bind:value="'C5'"> 生命科學系 C5 </option>
         <option v-bind:value="'C6'"> 生物科技與產業科學系 C6 </option>
       </select> 
-      <select id="department" v-if="this.selected === 'ME'">
+      <select id="department" v-if="this.selectedCollege === 'ME'" v-model="selectedDepartment">
         <option v-bind:value="'I2'"> 護理學系 I2 </option>
         <option v-bind:value="'I3'"> 醫學檢驗生物技術學系 I3 </option>
         <option v-bind:value="'I5'"> 醫學系 I5 </option>
@@ -87,7 +87,7 @@
         <option v-bind:value="'I8'"> 藥學系 I8 </option>
       </select> 
     </section>
-    <label> 年級 grade </label> <select> 
+    <label> 年級 grade </label> <select id="grade" v-model="selectedGrade"> 
       <option v-bind:value="'1'"> 一年級 Freshman </option>
       <option v-bind:value="'2'"> 二年級 Sophomore </option>
       <option v-bind:value="'3'"> 三年級 Junior </option>
@@ -110,7 +110,9 @@
   export default {
     data () {
       return {
-        selected: 'AN',
+        selectedCollege: 'AN',
+        selectedDepartment: '',
+        selectedGrade: '1',
         imageUploader: null,
         croppableImage: null,
         cutButton: null
@@ -140,17 +142,47 @@
             // TODO: error action.
             return
           }
+          // validation for image
+          if (this.croppableImage === null) {
+            console.log('you need to choose profile photo!!00')
+            // TODO: error action.
+            return
+          }
+          // vailadation for identity
+          if (this.selectedDepartment === '') {
+            console.log('department can not be empty')
+            // TODO: error action.
+            return
+          }
           const params = {
             username: document.getElementById('username').value,
             password: pwd,
             name: document.getElementById('name').value,
-            email: document.getElementById('email').value
+            email: document.getElementById('email').value,
+            college: this.selectedCollege,
+            department: this.selectedDepartment,
+            grade: this.selectedGrade
           }
-          axios.post('/api/registry', qs.stringify(params)
-          ).then((val) => {
-            console.log(val)
-          }).catch((err) => {
-            console.log(err)
+          const data = new FormData()
+          data.append('account', params.username)
+          // get the image file
+          let imageFile = document.querySelector('.image').file
+          console.log(imageFile)
+          data.append('image', imageFile, imageFile.name)
+          // upload the profile picture.
+          axios.post('/api/bighead', data, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          }).then((response) => {
+            console.log('upload images success!!')
+            // registry other information.
+            axios.post('/api/registry', qs.stringify(params)
+            ).then((val) => {
+              console.log(val)
+            }).catch((err) => {
+              console.log(err)
+            })
           })
         }
       },

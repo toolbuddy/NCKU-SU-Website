@@ -191,6 +191,8 @@ export default {
       const height = this.cutSize * this.originHeight / this.targetImg.clientHeight
       this.resizeCanvas.getContext('2d').drawImage(this.targetImg, targetLeft, targetTop,
         width, height, 0, 0, this.resizeCanvas.width, this.resizeCanvas.height)
+      // get the cropped image file.
+      this.getCroppedImageFile()
       return this.resizeCanvas.toDataURL('image/*')
     },
     getCroppedImageFile: function () {
