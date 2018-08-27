@@ -40,6 +40,7 @@ router.post('/upload', urlencodedParser, (req, res) => {
         res.end();
       }
     }
+    uploadedFilePath.push('/uploads/post/' + fields.title + '_' + number)
     // visit all files
     for (let key in files) {
       const uploadedFile = files[key]

@@ -24,13 +24,11 @@ router.post('/uploadFile', urlencodedParser, (req, res) => {
     // parse the form
     form.parse(req, (err, fields, files) => {
       if (err) throw err
-      const uploadedFilePath = []
       // use uuid to name the folder name.
       const number = uuid()
       try {
         // create or use existing folder.
-        fs.mkdirSync(rootPath + 'static/uploads/post/' + fields.title + '_' + number)
-        fs.mkdirSync(rootPath + 'static/uploads/post/' + fields.title + '_' + number + '/attachment/')
+        fs.mkdirSync(rootPath + 'static/' + fields.path + '/attachment/')
       } catch (err) {
         if (err.code !== 'EEXIST') {      
           console.log(err)
@@ -43,11 +41,7 @@ router.post('/uploadFile', urlencodedParser, (req, res) => {
       for (let key in files) {
         const uploadedFile = files[key]
         const tmpPath = uploadedFile.path
-        const targetPath = rootPath + 'static/uploads/post/' + fields.title + '_' + number
-          + '/attachment/' + uploadedFile.name
-        // add the attachment file path to uploadedPath.
-        uploadedFilePath.push('/uploads/post/' + fields.title + '_' + number
-        + '/attachment/' + uploadedFile.name)
+        const targetPath = rootPath + 'static/' + fields.path + '/attachment/' + uploadedFile.name
         // save the uploaded image.
         fs.rename(tmpPath, targetPath, function(err) {
           if (err) throw err;
@@ -58,7 +52,7 @@ router.post('/uploadFile', urlencodedParser, (req, res) => {
       }
       // return the uploaded file path.
       res.set({ 'content-type': 'application/json; charset=utf-8' })
-      res.status(200).json(uploadedFilePath)
+      res.status(200)
       res.end();
     });
 });
