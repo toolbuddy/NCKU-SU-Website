@@ -3,11 +3,22 @@ const tag = db.models.tag;
 const Op = db.sequelize.Op;
 const ID_FILTER = '%%%%%%%%%'
 
+/*
+add(1, {
+  studentId: 'F74056132',
+  title: 'title',
+  content: 'content',
+  tags: ['tg1', 'tg2', 'tg3'],
+  files: ['/path/to/files', '/abcabcabc/', 'this/is/file']
+});
+*/
+
 function add(vital, data) {
   // Promise array
   const pa = new Array();
     
   const target = vital?db.models.topNews:db.models.message;
+  const name = vital?'newsId':'messageId';
   // push article to promise array
   pa.push(new Promise((resolve, reject) => {
     db.sequelize.transaction( t => {
@@ -44,21 +55,27 @@ function add(vital, data) {
     }));
   };
 
-  // create articleTag
   return Promise.all(pa)
   .then( res => {
-    for (var i=1; i<res.length; ++i) {
-      db.models.articleTag.create({
-        tagId: res[i],
-        newsId: res[0]
-      })
-      .then( res => {
-        return true;
-      })
-      .catch( err => {
-        return false;
-      });
-    }
+    db.sequelize.transaction( t => {
+      for (var i=1; i<res.length; ++i) {
+        // create articleTag
+        db.models.articleTag.create({
+          tagId: res[i],
+          newsId: res[0]
+        })
+        .then( res => {
+            console.log(res);
+        });
+      };
+
+      // insert file path
+      for (var i=0; i<data.files.length; ++i) {
+        const obj = {path: data.files[i]};
+        obj[name] = res[0];
+        db.models.file.create(obj);
+      }
+    });
   });
 }
 
