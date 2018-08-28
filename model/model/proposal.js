@@ -24,6 +24,13 @@ module.exports = function(sequelize, DataTypes){
     }
   });
 
+  proposal.associate = function(models) {
+    proposal.belongsTo(models.account, {foreignKey: 'studentId'});
+    proposal.belongsToMany(models.account, {through: 'proposalAgree', foreignKey: 'proposalId'});
+    proposal.belongsToMany(models.tag, {through: 'proposalTag', foreignKey: 'proposalId'});
+    proposal.belongsTo(models.proposalClass, {foreignKey: 'classId'});
+    proposal.hasMany(models.discuss, {foreignKey: 'proposalId'});
+  };
   return proposal;
   
 }
