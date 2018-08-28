@@ -25,7 +25,7 @@ new Promise((resolve, reject) => {
 	// bind relations
 	for (var x in db.models) {
     if (db.models[x].hasOwnProperty('associate'))
-		  db.models[x].associate(db.models);
+	  db.models[x].associate(db.models);
 	}
 });
 
