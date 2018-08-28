@@ -56,6 +56,7 @@
     　 <option value="topnews">重要公告</option>
     　 <option value="message">文字快訊</option>
     </select><br/>
+    <upload-file-zone ref="child"></upload-file-zone> <br/>
     <button type="button" v-on:click="post"> 發布 Post </button>
     <button type="button"> 取消 Cancel </button>
   </div>
@@ -66,6 +67,7 @@
   import axios from '~/plugins/axios'
   import qs from 'qs'
   import ResizeableImg from '~/components/announcement/editor/resizeable-img.vue'
+  import UploadFileZone from '~/components/announcement/editor/upload-file-zone.vue'
   const ResizeableImgCtor = Vue.extend(ResizeableImg)
 
   export default {
@@ -91,7 +93,8 @@
       setInterval(this.time, 1000)
     },
     components: {
-      ResizeableImg
+      ResizeableImg,
+      UploadFileZone
     },
     methods: {
       time: function () {
@@ -213,36 +216,44 @@
         for (let [index, element] of images.entries()) {
           data.append('files[' + index + ']', element.file, element.file.name)
         }
+
         axios.post('/api/upload', data, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
-        }).then((response) => {
+        }).then((location) => {
           console.log('upload images success!!')
           // modify all img DOM element to uploaded image.
-          for (let [index, element] of response.data.entries()) {
-            images[index].src = element
-            console.log(images[index].src)
+          for (let i = 1; i < location.data.length; ++i) {
+            images[i - 1].src = location.data[i]
+            console.log(location.data[i].src)
           }
-          // post announcement code here...
-          var Type
-          if (document.getElementsByName('type')[0].value === 'topnews') {
-            Type = '1'
-          } else {
-            Type = '0'
-          }
-          const param = {
-            title: document.getElementById('title').textContent,
-            announcer: 'will get from login status',
-            time: this.currentTime,
-            type: Type,
-            content: document.getElementsByClassName('editor')[1].outerHTML
-          }
-          axios.post('/api/saveArticle', qs.stringify(param)
-          ).then((value) => {
-            console.log('article post is done')
-          }).catch((err) => {
-            console.log(err)
+          console.log(location.data)
+          // upload the attachment
+          new Promise((resolve, reject) => {
+            this.$refs.child.submitFile(location.data[0])
+            resolve(true)
+          }).then((res) => {
+            // post announcement code here...
+            let Type
+            if (document.getElementsByName('type')[0].value === 'topnews') {
+              Type = '1'
+            } else {
+              Type = '0'
+            }
+            const param = {
+              title: document.getElementById('title').textContent,
+              announcer: 'will get from login status',
+              time: this.currentTime,
+              type: Type,
+              content: document.getElementsByClassName('editor')[1].outerHTML
+            }
+            axios.post('/api/saveArticle', qs.stringify(param)
+            ).then((value) => {
+              console.log('article post is done')
+            }).catch((err) => {
+              console.log(err)
+            })
           })
         })
       }
