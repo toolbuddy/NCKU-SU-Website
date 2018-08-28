@@ -7,8 +7,8 @@ module.exports = function(sequelize, DataTypes) {
 
   discuss.associate = function(models) {
     discuss.belongsTo(models.account, {foreignKey: 'studentId'});
-    discuss.hasMany(models.reply, {foreignKey: 'parentId'});
-    discuss.belongsTo(models.proposal, {foreignKey: 'parentId'});
+    discuss.hasMany(models.reply, {foreignKey: 'discussId'});
+    discuss.belongsTo(models.proposal, {foreignKey: 'proposalId'});
   }
 
   return discuss;
