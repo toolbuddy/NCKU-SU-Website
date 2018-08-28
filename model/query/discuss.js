@@ -1,20 +1,30 @@
 const db = require('../sqldb')
 
 /*
+ * helper functions
+ */
+function getRef(type) {
+  const target = (type==='discuss')?db.models.discuss:db.models.reply;
+  const parentName = (type==='discuss')?'proposalId':'discussId';
+  return [target, parentName];
+}
+
+/*
  * "data" in json format,
  * need content, studentId, parentId
  *
  * parameter "type" means to choose 'discuss' or 'reply'
  */
 function add(data, type) {
-  const target = (type==='discuss')?db.models.discuss:db.models.reply;
-  const parentId = (type==='discuss')?'proposalId':'discussId';
 
-  db.sequelize.transaction( t => {
-    target.create({
-      content: data.content,
-      studentId: data.studentId,
-      parentId: data.parentId
+  const [tar, par] = getRef(type);
+  const obj = {content: data.content, studentId: data.studentId}
+  obj[par] = data.parentId;
+
+  return db.sequelize.transaction( t => {
+    return tar.create(obj)
+    .then( res => {
+        console.log(res);
     });
   });
 }
@@ -23,34 +33,57 @@ function add(data, type) {
  * parameter "type" means to choose 'discuss' or 'reply'
  */
 function del(id, type) {
-  const target = (type==='discuss')?db.models.discuss:db.models.reply;
+  const [tar, par] = getRef(type);
 
   db.sequelize.transaction( t => {
-    target.findById(id)
+    tar.findById(id)
     .then( res => {
       res.destroy();
     });
   });
 }
 
-function get(id, type) {
-  const target = (type==='discuss')?db.models.discuss:db.models.reply;
-  const parentId = (type==='discuss')?'proposalId':'discussId';
+/*
+ * get discuss/reply content
+ *
+ * id: parentId
+ * type: discuss or reply
+ */
+function getContent(id, type) {
+
+  const [tar, par] = getRef(type);
+  const scope = {};
+  scope[par] = id;
 
   return new Promise( (resolve, reject) => {
-    var ret = [];
 
-    target.findAll({
-      where: {
-        parentId: id
-      },
+    tar.findAll({
+      where: scope,
       order: ['id']
-      // TODO: add limit or offset?
     })
     .then( res => {
+      var ret = [];
       res.forEach( ele => {
         ret.append(ele.dataValues);
       });
+
+      resolve(ret);
+    });
+  });
+}
+
+function getSum(id, type) {
+
+  const [tar, par] = getRef(type);
+  const scope = {};
+  scope[par] = id;
+
+  return new Promise( (resolve, reject) => {
+    tar.findAll({
+      where: scope
+    })
+    .then( res => {
+      resolve(res.length);
     });
   });
 }
@@ -58,5 +91,6 @@ function get(id, type) {
 module.exports = {
   add: add,
   del: del,
-  get: get
+  getContent: getContent,
+  getSum: getSum,
 }

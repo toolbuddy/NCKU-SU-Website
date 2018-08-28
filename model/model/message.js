@@ -1,5 +1,4 @@
 module.exports = (sequelize, DataTypes) => {
-<<<<<<< HEAD
   var message = sequelize.define('message', {
     title: {
       type: DataTypes.STRING

@@ -13,7 +13,7 @@ function add(data) {
         studentId: data.studentId,
         title: data.title,
         content: data.content,
-        needVoter: data.needVoter,
+        threshold: data.threshold,
         classId: data.classId
       })
       .then( res => {
@@ -59,7 +59,7 @@ function add(data) {
         return false;
       });
     }
-  }
+  });
 }
 
 function del(id) {
