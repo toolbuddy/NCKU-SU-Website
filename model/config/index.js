@@ -1,14 +1,20 @@
-var all = {
+const setting =  require('./default.js')
+
+module.exports =  {
     sequelize: {
-        database: 'mydb',
-        username: 'root',
-        password:  null,
+        database: setting.database.database,
+        username: setting.database.username,
+        password: setting.database.password,
         define: {
             charset: 'utf8'
         },
-        host: 'localhost',
-        dialect: 'mysql',
-    }
+        host: setting.database.host,
+        dialect: setting.database.dialect,
+        operatorsAliases: 'false',
+        logging: false
+    },
+	email: {
+		user: setting.email.user,
+		pass: setting.email.pass
+	}
 }
-
-module.exports = all;
