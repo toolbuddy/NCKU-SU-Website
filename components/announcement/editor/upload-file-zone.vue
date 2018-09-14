@@ -9,15 +9,9 @@
     </form>
     <section>
       <label v-if="files.length === 0">目前尚無任何附加檔案</label>
-      <div v-for="(file, index) in files" v-bind:key="index" class="fileColumn">
-        <figure v-bind:class="[`preview_${index}`]">
-          <img/>
-        </figure>
-        <div class="overlay">
-          <label>{{ file.name }}</label>
-          <i class="fas fa-times remove" v-on:click="removeFile(index)"></i>
-        </div>
-      </div>
+      <file-column v-for="(iter, index) in files" v-bind:key="iter.name" 
+        v-bind:file="iter" v-bind:index="index" v-on:removeFile="removeFile(index)">
+      </file-column>
     </section>
     <button class="submit" v-on:click="submitFiles()" v-if="files.length > 0 && submitable">Submit</button>
     <progress max="100" v-bind:value.prop="uploadPercentage"></progress>
@@ -26,17 +20,21 @@
 
 <script>
 import axios from '~/plugins/axios'
+import FileColumn from '~/components/announcement/editor/upload-file-column.vue'
 
 export default {
   props: {
     submitable: Boolean
+  },
+  components: {
+    FileColumn
   },
   data () {
     return {
       form: null,
       files: [],
       uploadPercentage: 0,
-      preview: 0
+      previewDOMs: []
     }
   },
   computed: {
@@ -87,34 +85,9 @@ export default {
         for (let ele of files) {
           this.files.push(ele)
         }
-        this.getImagePreview()
         // remove all file in the FileList of input.
         document.getElementById('fileUpload').value = ''
       }
-    },
-    getImagePreview: function () {
-      // prevent from the absence of DOM element.
-      this.$nextTick(() => {
-        for (let [index, ele] of this.files.entries()) {
-          const target = this.$el.querySelector(`.preview_${index}`)
-          const reader = new FileReader()
-          if ((/\.(jpe?g|png|gif)$/i).test(ele.name)) {
-            reader.onload = (e) => {
-              // create the object url
-              const url = window.URL.createObjectURL(ele)
-              target.querySelector('img').src = url
-            }
-            reader.readAsDataURL(ele)
-          } else {
-            // TODO: change to use font awesome icon.
-            target.classList.add('fas')
-            target.classList.add('fa-file')
-            target.classList.add('fa-5x')
-            // target.insertAdjacentHTML('beforebegin', '<i class="fas fa-file fa-8x" aria-hidden="true"> </i>')
-            // target.src = '~/assets/img/file-icon.png'
-          }
-        }
-      })
     },
     removeFile: function (key) {
       this.files.splice(key, 1)
@@ -195,88 +168,6 @@ export default {
   .dropFiles {
     color: grey;
   }
-  .fileColumn {
-    display: inline-block;
-    position: relative;
-    width: 100px;
-    height: 100px;
-    margin: 10px;
-    padding: 10px;
-    overflow: hidden;
-    border: 1px solid #ddd;
-  }
-
-  .fileColumn figure {
-    display: block;
-    height: 100px;
-    width: 100px;
-    line-height: 100px;
-    text-align: center;
-    color: gray;
-    object-fit: cover; /* Do not scale the image */
-    object-position: center; /* Center the image within the element */
-    margin: auto;
-    border-radius: 15px;
-  }
-  .fileColumn figure img {
-    display: block;
-    height: 100px;
-    width: 100px;
-    object-fit: cover; /* Do not scale the image */
-    object-position: center; /* Center the image within the element */
-    margin: auto;
-    border-radius: 15px;
-  }
-
-  .fileColumn .overlay {
-    position: absolute;
-    display: block;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    height: 100px;
-    width: 100px;
-    transition: .3s ease;
-    margin: auto;
-    border-radius: 15px;
-  }
-
-  .fileColumn:hover .overlay {
-    background-color: rgba(0, 0, 0, 0.67);
-  }
-
-  .overlay label {
-    position: absolute;
-    top: 70px;
-    width: 100px;
-    height: 20px;
-    overflow: hidden;
-    font-size: 16px;
-    text-align: center;
-    color: black;
-    transition: .3s ease;
-  }
-
-  .fileColumn:hover .overlay label {
-    color: white;
-  }
-
-  .overlay i {
-    position: absolute;
-    font-size: 24px;
-    top: 4px;
-    left: 74px;
-    color: antiquewhite;
-    cursor: pointer;
-    opacity: 0;
-    transition: .3s ease;
-  }
-
-  .fileColumn:hover .overlay i {
-    opacity: 1;
-  }
-
   .submit {
     display: block;
     margin: auto;
