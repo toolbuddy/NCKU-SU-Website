@@ -10,7 +10,9 @@ module.exports =  {
         },
         host: setting.database.host,
         dialect: setting.database.dialect,
-        operatorsAliases: 'false'
+        operatorsAliases: 'false',
+        allowNull: false,
+        logging: false
     },
     email: {
         user: setting.email.user,

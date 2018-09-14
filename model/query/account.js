@@ -55,9 +55,56 @@ function verify(studentId) {
 }
 
 /*
+ *  get the token for password reset
+ */
+function getToken(studentId) {
+  return new Promise( (resolve, reject) => {
+    account.findById(studentId)
+    .then( res => {
+      resolve(res.getDataValue('token'))
+    })
+    .catch( () => {
+      reject("wrong studentId")
+    })
+  })
+}
+
+/*
+ * check if token exists and should be primary key
+ */
+function checkToken(token) {
+
+  return new Promise( (resolve, reject) => {
+    account.findOne({where: {token: token}})
+    .then( res => {
+      if (!res) reject("cannot find")
+      return res;
+    })
+    .catch( err => {
+        reject("cannot find")
+    })
+    .then( res => {
+      let newToken = base64url(crypto.randomBytes(30))
+      //TODO: prevent duplicate token
+
+      // update token column
+      db.sequelize.transaction( t => {
+        res.update({
+          token: newToken
+        })
+        .then( res => {
+          resolve(newToken)
+        })
+      })
+    })
+  })
+}
+
+/*
  * create a totally new account
  */
 function createAccount(data) {
+    console.log('hi')
 
   // Promise array
   let pa = [];
@@ -85,8 +132,6 @@ function createAccount(data) {
     });
   });
 }
-
-//TODO: add function related to token
 
 /*
  * get email by studentId, used in "forgot password"
@@ -141,5 +186,9 @@ module.exports = {
 
   /* password */
   getEmail: getEmail,
-  changepwd: changepwd
+  changepwd: changepwd,
+
+  /* token */
+  getToken: getToken,
+  checkToken: checkToken
 };

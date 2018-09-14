@@ -1,5 +1,5 @@
 module.exports = function(sequelize, DataTypes) {
-    var articleTag = sequelize.define('articleTag');
+  var articleTag = sequelize.define('articleTag');
 
-    return articleTag;
+  return articleTag;
 }
