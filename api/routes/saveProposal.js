@@ -4,7 +4,7 @@ const fs = require('fs');
 const bodyParser = require('body-parser');
 const urlencodedParser = bodyParser.urlencoded({ extends:false, limit: '50mb'});
 const formidable = require('formidable');
-const proposalOp = require('../../model/query');
+const proposalOp = require('../../model/query/proposal.js');
 
 // generate the uuid to name the post folder.
 const uuid = () => {
@@ -65,20 +65,9 @@ router.post('/Proposal_phote', urlencodedParser, (req, res) => {
 });
 
 router.post('/saveProposal',urlencodedParser, (req,res) => {
-  const title = req.body.title;
-  const announcer = req.body.announcer;
-  const time = req.body.time;
-  var type;
-  const content = req.body.content;
-  if (req.body.type == "1")
-    type = 1; // important
-  else
-    type = 0; // not important
-
   // send data to database
-  
-   
-  res.send("kkk");
+  proposalOp.add(req.body);
+  res.end();
 });
 
 module.exports = router;

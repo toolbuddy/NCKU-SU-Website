@@ -8,12 +8,14 @@ const users = require('./routes/test');
 const getProposal = require('./routes/getProposal');
 const ProposalSum = require('./routes/ProposalSum');
 const saveProposal = require('./routes/saveProposal');
+const deleteProposal = require('./routes/deleteProposal');
 
 // Import API Routes
 app.use(users);
 app.use(getProposal);
 app.use(ProposalSum);
 app.use(saveProposal);
+app.use(deleteProposal);
 
 // Export the server middleware
 module.exports = {
