@@ -56,6 +56,7 @@
     　 <option value="topnews">重要公告</option>
     　 <option value="message">文字快訊</option>
     </select><br/>
+    <tag-selector></tag-selector>
     <upload-file-zone ref="child"></upload-file-zone> <br/>
     <button type="button" v-on:click="post"> 發布 Post </button>
     <button type="button"> 取消 Cancel </button>
@@ -68,6 +69,7 @@
   import qs from 'qs'
   import ResizeableImg from '~/components/announcement/editor/resizeable-img.vue'
   import UploadFileZone from '~/components/announcement/editor/upload-file-zone.vue'
+  import TagSelector from '~/components/announcement/editor/tag-selector.vue'
   const ResizeableImgCtor = Vue.extend(ResizeableImg)
 
   export default {
@@ -94,7 +96,8 @@
     },
     components: {
       ResizeableImg,
-      UploadFileZone
+      UploadFileZone,
+      TagSelector
     },
     methods: {
       time: function () {
