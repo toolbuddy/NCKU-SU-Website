@@ -1,4 +1,6 @@
 const db = require('../sqldb')
+const crypto = require('crypto')
+const base64url = require('base64url')
 const account = db.models.account;
 
 /*
@@ -56,24 +58,35 @@ function verify(studentId) {
  * create a totally new account
  */
 function createAccount(data) {
-  let passwd = '';
 
-  account.hashFunc(data.password)
-  .then( p => {
-      passwd = p;
-  })
-  .then( () => {
+  // Promise array
+  let pa = [];
+  pa.push(new Promise( (resolve, reject) => {
+    account.hashFunc(data.password)
+    .then( p => {
+      resolve(p)
+    });
+  }));
+  pa.push(new Promise( (resolve, reject) => {
+    resolve(base64url(crypto.randomBytes(30)))
+  }));
+
+  Promise.all(pa).then( res => {
+    console.log(res[0] + ' ' + res[1]);
     db.sequelize.transaction( t=> {
       console.log(data.username);
       account.create({
         studentId: data.username,
         email: data.email,
-        password: passwd,
+        password: res[0],
         name: data.name,
+        token: res[1]
       })
     });
   });
 }
+
+//TODO: add function related to token
 
 /*
  * get email by studentId, used in "forgot password"
