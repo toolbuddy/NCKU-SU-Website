@@ -21,10 +21,10 @@ module.exports = function(sequelize, DataTypes) {
     },
     verified: {
   	  type: DataTypes.BOOLEAN,
-	  defaultValue: false
+	    defaultValue: false
     },
     token: {
-      type: DataTypes.STRING(30)
+      type: DataTypes.STRING(30),
     }
   });
 
