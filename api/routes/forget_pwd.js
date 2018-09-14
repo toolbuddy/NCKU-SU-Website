@@ -11,9 +11,10 @@ router.post('/forget_pwd',urlencodedParser,(req , res) => {
   let Email;
   let options;
   const user = req.body.username;
+  const token = accountOp.getToken(user);
   // send email time 
   const time = Date.now();
-  const str = user + '/' + time;
+  const str = user + '/' + time + '/' + token;
   //encrypt
   const passkey = crypto.encrypt(str,"test");
   // query email from database with username
@@ -37,11 +38,12 @@ router.post('/forget_pwd',urlencodedParser,(req , res) => {
 
 router.get('/verify_forget_pwd',(req,res)=>{
   console.log("get token");
-  let token = req.query.token;
+  let token_url = req.query.token;
   //decrypt
-  let str = crypto.decrypt(token,"test");
+  let str = crypto.decrypt(token_url,"test");
   let user = str.split('/')[0];
   let time = parseInt(str.split('/')[1]);
+  let token = str.split('/')[2];
   let diffTime = parseInt(Date.now()) - time ;
   //set expired time for 30 mins
   if( diffTime > 1000*60*15 ){
@@ -55,6 +57,7 @@ router.get('/verify_forget_pwd',(req,res)=>{
     new Promise((resolve, reject) => {
       // use session to keep modify username.
       req.session.forget = {};
+      req.session.forget.token = token;
       req.session.forget.username = user;
       resolve(true);
     }).then( result => {
@@ -64,14 +67,19 @@ router.get('/verify_forget_pwd',(req,res)=>{
 })
 
 router.post('/verified_change_pwd', urlencodedParser,(req,res)=>{
+  const token = req.body.token;
   const username = req.body.username;
   const new_pwd = req.body.new_pwd;
-  accountOp.changepwd(username,new_pwd);
+  if ( accountOp.checkToken(token) ) {
+    accountOp.changepwd(username,new_pwd);
+    res.status(200);
+  } else {
+    res.status(304);
+  }
   // remove local cookie.
   res.clearCookie('connect.sid');
   // remove the server store cookie.
   req.session.destroy();
-  console.log("has changed password")
   res.end();
 })
 

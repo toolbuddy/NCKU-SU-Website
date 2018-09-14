@@ -11,7 +11,6 @@ router.post('/change_pwd',urlencodedParser,(req , res) => {
   const username = req.body.username;
   const pwd = req.body.pwd;
   const new_pwd = req.body.new_pwd;
-  console.log(pwd)
   accountOp.login(username, pwd)
   .then(val => {
     /*
@@ -30,15 +29,14 @@ router.post('/change_pwd',urlencodedParser,(req , res) => {
       res.clearCookie('connect.sid');
       // remove the server store cookie.
       req.session.destroy();
-      res.end();
     } else {
       console.log("error password");
-      res.send("error password");
     }
   })
   .catch((err) => {
     console.log(err);
   })
+  res.end();
 })
 
 module.exports = router;

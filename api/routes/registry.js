@@ -8,15 +8,10 @@ const crypto = require('./about/crypto.js');
 const config = require('../../model/config');
 
 router.post('/registry',urlencodedParser,(req,res)=>{
-  console.log(req.body);
-  const username = req.body.username;
-  const pwd = req.body.password;
-  const name = req.body.name;
   const Email = req.body.email;
-  const college = req.body.college;
-  const department = req.body.department;
-  const grade = req.body.grade;
-  // regist time 
+  const token = crypto.encrypt(Email,"test");
+  req.body.token = token;
+  // regist time
   const time = Date.now();
   const str = Email + '/' + time;
   //save in database
