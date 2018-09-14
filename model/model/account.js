@@ -23,6 +23,9 @@ module.exports = function(sequelize, DataTypes) {
     verified: {
   	  type: DataTypes.BOOLEAN,
 	    defaultValue: false
+    },
+    token: {
+      type: DataTypes.STRING(30)
     }
   });
 
