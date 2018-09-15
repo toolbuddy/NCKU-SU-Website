@@ -1,4 +1,6 @@
 const db = require('../sqldb')
+const crypto = require('crypto')
+const base64url = require('base64url')
 const account = db.models.account;
 
 /*
@@ -53,23 +55,79 @@ function verify(studentId) {
 }
 
 /*
+ *  get the token for password reset
+ */
+function getToken(studentId) {
+  return new Promise( (resolve, reject) => {
+    account.findById(studentId)
+    .then( res => {
+      resolve(res.getDataValue('token'))
+    })
+    .catch( () => {
+      reject("wrong studentId")
+    })
+  })
+}
+
+/*
+ * check if token exists and should be primary key
+ */
+function checkToken(token) {
+
+  return new Promise( (resolve, reject) => {
+    account.findOne({where: {token: token}})
+    .then( res => {
+      if (!res) reject("cannot find")
+      return res;
+    })
+    .catch( err => {
+        reject("cannot find")
+    })
+    .then( res => {
+      let newToken = base64url(crypto.randomBytes(30))
+      //TODO: prevent duplicate token
+
+      // update token column
+      db.sequelize.transaction( t => {
+        res.update({
+          token: newToken
+        })
+        .then( res => {
+          resolve(newToken)
+        })
+      })
+    })
+  })
+}
+
+/*
  * create a totally new account
  */
 function createAccount(data) {
-  let passwd = '';
+    console.log('hi')
 
-  account.hashFunc(data.password)
-  .then( p => {
-      passwd = p;
-  })
-  .then( () => {
+  // Promise array
+  let pa = [];
+  pa.push(new Promise( (resolve, reject) => {
+    account.hashFunc(data.password)
+    .then( p => {
+      resolve(p)
+    });
+  }));
+  pa.push(new Promise( (resolve, reject) => {
+    resolve(base64url(crypto.randomBytes(30)))
+  }));
+
+  Promise.all(pa).then( res => {
+    console.log(res[0] + ' ' + res[1]);
     db.sequelize.transaction( t=> {
       console.log(data.username);
       account.create({
         studentId: data.username,
         email: data.email,
-        password: passwd,
+        password: res[0],
         name: data.name,
+        token: res[1]
       })
     });
   });
@@ -128,5 +186,9 @@ module.exports = {
 
   /* password */
   getEmail: getEmail,
-  changepwd: changepwd
+  changepwd: changepwd,
+
+  /* token */
+  getToken: getToken,
+  checkToken: checkToken
 };
