@@ -7,14 +7,21 @@ module.exports = function(sequelize, DataTypes){
     content: {
         type: DataTypes.TEXT
     },
-    needVoter: {
-        type: DataTypes.INTEGER
+    threshold: {
+        type: DataTypes.INTEGER,
+        defaultValue: 9999999
     },
     currentVoter: {
-        type: DataTypes.INTEGER
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     },
     closeDiscuss: {
-        type: DataTypes.BOOLEAN
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    browseStat: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
     }
   });
 
@@ -23,6 +30,7 @@ module.exports = function(sequelize, DataTypes){
     proposal.belongsToMany(models.account, {through: 'proposalAgree', foreignKey: 'proposalId'});
     proposal.belongsToMany(models.tag, {through: 'proposalTag', foreignKey: 'proposalId'});
     proposal.belongsTo(models.proposalClass, {foreignKey: 'classId'});
+    proposal.hasMany(models.discuss, {foreignKey: 'proposalId'});
   };
   return proposal;
   
