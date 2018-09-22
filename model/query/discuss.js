@@ -14,6 +14,7 @@ function getRef(type) {
  * need content, studentId, parentId
  *
  * parameter "type" means to choose 'discuss' or 'reply'
+ * return id
  */
 function add(data, type) {
 
@@ -21,12 +22,14 @@ function add(data, type) {
   const obj = {content: data.content, studentId: data.studentId}
   obj[par] = data.parentId;
 
-  return db.sequelize.transaction( t => {
-    return tar.create(obj)
-    .then( res => {
-        console.log(res);
+  return new Promise( (resolve, reject) => {
+    db.sequelize.transaction( t => {
+      tar.create(obj)
+      .then( res => {
+        resolve(res.getDataValue('id')
+      })
     });
-  });
+  })
 }
 
 /*
@@ -56,7 +59,6 @@ function getContent(id, type) {
   scope[par] = id;
 
   return new Promise( (resolve, reject) => {
-
     tar.findAll({
       where: scope,
       order: ['id']
@@ -66,12 +68,16 @@ function getContent(id, type) {
       res.forEach( ele => {
         ret.append(ele.dataValues);
       });
-
       resolve(ret);
     });
   });
 }
 
+/*
+ * get the numbers of discuss/reply
+ * id: parentId
+ * type: discuss or reply
+ */
 function getSum(id, type) {
 
   const [tar, par] = getRef(type);
@@ -79,18 +85,16 @@ function getSum(id, type) {
   scope[par] = id;
 
   return new Promise( (resolve, reject) => {
-    tar.findAll({
-      where: scope
+    tar.count({where: scope})
+    .then( num => {
+      resolve(num)
     })
-    .then( res => {
-      resolve(res.length);
-    });
   });
 }
 
 module.exports = {
   add: add,
   del: del,
-  getContent: getContent,
+  get: getContent,
   getSum: getSum,
 }
