@@ -1,6 +1,7 @@
 const db = require('../sqldb')
 const target = db.models.proposal;
-const Op = db.sequelize.Op;
+const sequelize = db.sequelize
+const Op = sequelize.Op;
 const ID_FILTER = '%%%%%%%%%'
 
 function add(data) {
@@ -8,7 +9,7 @@ function add(data) {
   const pa = new Array()
     
   pa.push(new Promise((resolve, reject) => {
-    db.sequelize.transaction( t => {
+    sequelize.transaction( t => {
       target.create({
         studentId: data.studentId,
         title: data.title,
@@ -29,7 +30,7 @@ function add(data) {
   for (var i=0; i<data.tags.length; ++i) {
     pa.push(new Promise((resolve, reject) => {
       const tag = data.tags[i];
-      db.sequelize.transaction( t => {
+      sequelize.transaction( t => {
         db.models.tag.findOrCreate({
           where: { title: tag}
         })
@@ -63,7 +64,7 @@ function add(data) {
 }
 
 function del(id) {
-  db.sequelize.transaction( t => {
+  sequelize.transaction( t => {
     target.findById(id)
     .then( rse => {
         res.destroy();
@@ -71,6 +72,7 @@ function del(id) {
   });
 }
 
+// return: article data array [Promise]
 function getArticle(sum, offset, classId, id=ID_FILTER) {
   return new Promise( (resolve, reject) => {
     target.findAll({
@@ -97,9 +99,38 @@ function getSum(id=ID_FILTER) {
   return target.count({where: {studentId: { [Op.like]: id }}});
 }
 
+// return: currenVoter [Promise]
+function vote(id) {
+  return target.findById(id)
+  .then( res => {
+    return res.increment('currentVoter')
+    .then( sum => {
+      // can receive number after voted
+      return sum.getDataValue('currentVoter');
+    })
+  });
+}
+
+// return: id array [Promise]
+function exceed() {
+  return target.findAll({
+    where: sequelize.where(sequelize.col('currentVoter'), '>=',
+                           sequelize.col('threshold'))
+  })
+  .then( res => {
+    ids = [];
+    res.forEach( ele => {
+      ids.push(ele.getDataValue('id'))
+    });
+    return ids;
+  });
+}
+
 module.exports = {
   add: add,
   del: del,
   getArticle: getArticle,
-  getSum: getSum
+  getSum: getSum,
+  vote: vote,
+  exceed: exceed
 }
