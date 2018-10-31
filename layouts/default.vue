@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="root-layout">
     <custom-header></custom-header>
     <nuxt/>
     <custom-footer></custom-footer>
@@ -51,5 +51,11 @@ export default {
   font-weight: 300;
   font-size: 2.5em;
   margin: 0;
+}
+
+.root-layout {
+  display: grid;
+  grid-template-rows: 0.05fr 0.9fr 0.05fr;
+  justify-items: center;  
 }
 </style>
