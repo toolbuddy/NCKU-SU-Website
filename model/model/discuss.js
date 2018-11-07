@@ -9,6 +9,5 @@ module.exports = function(sequelize, DataTypes) {
     discuss.hasMany(models.reply, {foreignKey: 'discussId'});
     discuss.belongsTo(models.proposal, {foreignKey: 'proposalId'});
   }
-
   return discuss;
 }

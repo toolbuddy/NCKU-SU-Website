@@ -11,6 +11,5 @@ module.exports = function(sequelize, DataTypes) {
     tag.belongsToMany(models.message, {through: models.articleTag, foreignKey: 'tagId'});
     tag.belongsToMany(models.topNews, {through: models.articleTag, foreignKey: 'tagId'});
   }
-
   return tag;
 };
