@@ -22,7 +22,6 @@ module.exports = function(sequelize, DataTypes){
       type: DataTypes.INTEGER,
       defaultValue: 0
     }
-
   });
 
   proposal.associate = function(models) {
@@ -30,6 +29,7 @@ module.exports = function(sequelize, DataTypes){
     proposal.belongsToMany(models.account, {through: 'proposalAgree', foreignKey: 'proposalId'});
     proposal.belongsToMany(models.tag, {through: 'proposalTag', foreignKey: 'proposalId'});
     proposal.belongsTo(models.proposalClass, {foreignKey: 'classId'});
+    proposal.hasMany(models.discuss, {foreignKey: 'proposalId'});
   };
   return proposal;
   
