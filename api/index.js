@@ -1,15 +1,29 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 
 // Create express instnace
 const app = express();
 
 // Require API routes
-const users = require('./routes/test');
-const login = require('./routes/login');
+const post = require('./routes/post');
+const getMessage = require('./routes/getMessage');
+const getTopnews = require('./routes/getTopnews');
+const uploadFile = require('./routes/uploadFile');
+const getMessageSum = require('./routes/getMessageSum');
+const getTopnewsSum = require('./routes/getTopnewsSum');
+// Config root path
+const path = require('path');
+global.rootPath = path.join(__dirname + '/../');
 
 // Import API Routes
-app.use(users);
-app.use(login);
+app.use(post);
+app.use(getMessage);
+app.use(getTopnews);
+app.use(uploadFile);
+app.use(getMessageSum);
+app.use(getTopnewsSum);
+
+app.use(bodyParser.urlencoded({ extended: false }))
 
 // Export the server middleware
 module.exports = {

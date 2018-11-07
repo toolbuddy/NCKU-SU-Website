@@ -13,10 +13,14 @@
   },
   "dependencies": {
     "axios": "^0.16.2",
+    "bcryptjs": "^2.4.3",
     "cross-env": "^5.0.1",
     "express": "^4.15.3",
+    "formidable": "^1.2.1",
+    "mysql2": "^1.5.3",
     "nuxt": "latest",
     "prettier": "^1.12.1",
+    "sequelize": "^4.38.0",
     "source-map-support": "^0.4.15"
   },
   "devDependencies": {
