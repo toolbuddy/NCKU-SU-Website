@@ -7,12 +7,11 @@ module.exports = function(sequelize, DataTypes) {
       primaryKey: true
     },
     password: {
-      type: DataTypes.STRING(60),
-      
+      type: DataTypes.STRING(60)
     },
     permission: {
       type: DataTypes.INTEGER,
-	    defaultValue: false
+	  defaultValue: false
     },
     email: {
       type: DataTypes.STRING(30)
@@ -23,6 +22,9 @@ module.exports = function(sequelize, DataTypes) {
     verified: {
   	  type: DataTypes.BOOLEAN,
 	    defaultValue: false
+    },
+    token: {
+      type: DataTypes.STRING(30),
     }
   });
 

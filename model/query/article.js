@@ -1,4 +1,53 @@
 const db = require('../sqldb')
+<<<<<<< HEAD
+const article = db.article;
+const articleTag = db.articleTag;
+const tag = db.tag;
+
+function addArticle(student, title, content, vital, tags) {
+
+  new Promise( (resolve, reject) => {
+    // add articles
+    db.sequelize.transaction( t => {
+      article.create({
+        studentId: student,
+        title: title,
+        content: content,
+        vital: vital
+      })
+      .then( res => {
+          resolve(res.getDataValue('id'));
+        });
+      });
+    }).then( articleId => {
+  
+    // add tags
+      var cnt = 1;
+      tags.forEach( ele => {
+        tag.findOrCreate({
+          where: {
+            title: ele
+          }
+        })
+        .then( res => {
+          ;
+          db.sequelize.transaction( t => {
+            articleTag.create({
+              articleId: articleId,
+              tagId: res[0].getDataValue('id')
+            })
+            .catch( err => {
+              console.log(err);
+            });
+          })
+        })
+      });
+    });
+  console.log(tags);
+}
+
+function delArticle(id) {
+=======
 const tag = db.models.tag;
 const Op = db.sequelize.Op;
 const ID_FILTER = '%%%%%%%%%'
@@ -80,6 +129,7 @@ function add(vital, data) {
 }
 
 function del(id) {
+>>>>>>> develop
   db.sequelize.transaction( t=> {
     article.findById(id)
     .then( res => {
@@ -88,6 +138,61 @@ function del(id) {
   });
 }
 
+<<<<<<< HEAD
+function getArticle(type, sum, offset) {
+  return new Promise( (resolve, reject) => {
+  	article.findAll({
+	  where: {
+	  	vital: type
+	  },
+	  order: ['id'],
+	  offset: start,
+	  limit: sum
+	})
+	.then( res => {
+	  var tmp = [];
+	  res.forEach( ele => {
+		tmp.push(ele.dataValues);
+	  });
+	  resolve(tmp);
+	});
+  });
+}
+
+/* TODO: not this version! */
+function getSum(type) {
+  return new Promise( (resolve, reject) => {
+  	article.count( {
+  		where: {
+  			vital: type
+  		}
+  	})
+  	.then( sum => {
+  		resolve(sum);
+  	});
+  });
+}
+getSum(0).then(res=>{console.log(res)});
+getSum(1).then(res=>{console.log(res)});
+
+function getAccountArticle(student) {
+  return new Promise( (resolve, reject) => {
+    article.findAll({
+      where: {
+        studentId: student
+      }
+    })
+    .then( res => {
+      resolve(/* TODO: dataValues in different elements*/);
+    });
+  });
+}
+
+
+module.exports = {
+  add: addArticle,
+  getArticle: getArticle
+=======
 function getArticle(type, sum, offset, id=ID_FILTER) {
   const target = type?db.models.topNews:db.models.message;
   return new Promise( (resolve, reject) => {
@@ -121,4 +226,5 @@ module.exports = {
   del: del,
   getArticle: getArticle,
   getSum: getSum
+>>>>>>> develop
 }
