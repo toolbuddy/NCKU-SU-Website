@@ -4,7 +4,6 @@ module.exports = function(sequelize, DataTypes) {
       type: DataTypes.TEXT
     }
   });
-
   discuss.associate = function(models) {
     discuss.belongsTo(models.account, {foreignKey: 'studentId'});
     discuss.hasMany(models.reply, {foreignKey: 'discussId'});

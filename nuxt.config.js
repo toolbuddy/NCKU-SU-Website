@@ -43,7 +43,7 @@ module.exports = {
   /*
   ** Global CSS
   */
-  css: ['~/assets/css/main.css'],
+  css: ['~/assets/css/main.css', '~/plugins/fontawesome-free-5.1.1-web/css/all.min.css'],
   /*
   ** Add axios globally
   */

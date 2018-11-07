@@ -30,5 +30,12 @@ new Promise((resolve, reject) => {
     }
 });
 
+// add relations
+for (var i in db.models.length) {
+  if ("associate" in db.models[i]) {
+    db.models[i].associate(db.models);
+  }
+}
+
 module.exports = db;
 
