@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 
 // Create express instnace
 const app = express();
@@ -23,6 +24,14 @@ app.use(logout);
 app.use(forget_pwd);
 app.use(change_pwd);
 app.use(bighead);
+app.use(post);
+app.use(getMessage);
+app.use(getTopnews);
+app.use(uploadFile);
+app.use(getMessageSum);
+app.use(getTopnewsSum);
+
+app.use(bodyParser.urlencoded({ extended: false }))
 
 // Export the server middleware
 module.exports = {

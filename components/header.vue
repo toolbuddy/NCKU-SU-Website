@@ -1,6 +1,6 @@
 <template>
   <header>
-    <h2><router-link :to="{path: '/'}"> 第 26 屆學生會官方網站 </router-link></h2>
+    <h2><router-link v-bind:to="{path: '/'}"> 第 26 屆學生會官方網站 </router-link></h2>
     <ul class="custom-ul-style">
       <li><a href="#"> 關於學生會 </a></li>
       <li><a href="#"> 文章總覽 </a></li>
@@ -13,6 +13,7 @@
         <label v-if="this.$store.state.status"> Hello, <a href="#"> {{this.$store.state.authUser}} </a>  !!</label>
       </li>
       <li><a v-if="this.$store.state.status" href="#" v-on:click="logout"> 登出 </a> </li>
+      <li><a href="#"> 登入 </a></li>
       <li><a href="#"> 臉書 </a></li>
       <li><a href="#"> IG </a></li>
     </ul>
