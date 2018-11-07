@@ -11,10 +11,11 @@ module.exports =  {
         host: setting.database.host,
         dialect: setting.database.dialect,
         operatorsAliases: 'false',
+        allowNull: false,
         logging: false
     },
-	email: {
-		user: setting.email.user,
-		pass: setting.email.pass
-	}
+    email: {
+        user: setting.email.user,
+        pass: setting.email.pass
+    }
 }

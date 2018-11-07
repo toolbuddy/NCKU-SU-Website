@@ -1,3 +1,18 @@
+// Import the express session.
+const session = require('express-session')
+// Import the database.
+const database = require('./model/sqldb');
+const sequelize = database.sequelize;
+// Import the plugin of sequelize with connect session.
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
+// Initialize the store.
+const myStore = new SequelizeStore({
+  db: sequelize
+})
+
+// Auto create session table
+myStore.sync();
+
 module.exports = {
   /*
   ** Headers of the page
@@ -28,7 +43,7 @@ module.exports = {
   /*
   ** Global CSS
   */
-  css: ['~/assets/css/main.css', '~plugins/fontawesome-free-5.1.1-web/css/all.min.css'],
+  css: ['~/assets/css/main.css', '~/plugins/fontawesome-free-5.1.1-web/css/all.min.css'],
   /*
   ** Add axios globally
   */
@@ -49,6 +64,14 @@ module.exports = {
     }
   },
   serverMiddleware: [
+    // Session middleware
+    session({
+      secret: '128 bytes random string',
+      store: myStore,
+      resave: false,
+      saveUninitialized: false,
+      cookie: { maxAge: 600 * 1000 }
+    }),
     // API middleware
     '~/api/index.js'
   ]

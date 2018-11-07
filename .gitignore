@@ -13,7 +13,9 @@ dist
 # Backpack build
 build
 
-<<<<<<< HEAD
+# Uploads
+static/uploads
+
 # Test script
 test_script
 

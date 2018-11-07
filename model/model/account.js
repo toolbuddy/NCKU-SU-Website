@@ -25,6 +25,10 @@ module.exports = function(sequelize, DataTypes) {
     },
     iconPath: {
       type: DataTypes.STRING(30)
+	    defaultValue: false
+    },
+    token: {
+      type: DataTypes.STRING(30),
     }
   });
 
@@ -48,7 +52,7 @@ module.exports = function(sequelize, DataTypes) {
       });
   };
   
-  account.verifyPwd = async function(input, hashed) {
+  account.verify = async function(input, hashed) {
       return bcrypt.compare(input, hashed);
   }
   

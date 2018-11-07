@@ -1,34 +1,36 @@
 const { Router } = require('express')
-
 const router = Router()
-const loginOperation = require('../../model/query/login.js')
-var bodyParser = require('body-parser');
-var urlencodedParser = bodyParser.urlencoded({ extended: false});
+const accountOp= require('../../model/query/account.js')
+const bodyParser = require('body-parser');
+const urlencodedParser = bodyParser.urlencoded({ extended: false});
 
-/* GET user listing. */
-router.post('/user', urlencodedParser, (req, res) => {
-    let username = req.body.username;
-    let pwd = req.body.password;
-    let status;
-
-    loginOperation.login(username, pwd)
-    .then( val =>{
-        // 0 -> success
-        // 1 -> wrong password
-        // 2 -> wrong account
-        res.send(val);
-    });
-
-})
-
-/* GET developer by ID. */
-router.get('/developers/:id', (req, res) => {
-  const id = parseInt(req.params.id)
-  if (id >= 0 && id < data.length) {
-    res.json(data[id])
-  } else {
-    res.sendStatus(404)
-  }
+router.post('/login', urlencodedParser, (req, res) => {
+  const username = req.body.username;
+  const pwd = req.body.password;
+  // connect to mysql
+  accountOp.login(username, pwd)
+  .then(val => {
+    /*
+     * status code
+     * 0  -> success, no admin
+     * 1  -> success, with admin
+     * -1 -> wrong username or password
+     */
+    // TODO: need to get the permission from operation result.
+    const result = {
+      status: !(val === -1),    // only -1 represents login failure
+      authUser: val !== -1 ? username : null,
+      isLogin: val !== -1,
+      role: val // permission role
+    }
+    if (val === 0 || val === 1) {
+      // set session data
+      req.session.authUser = username
+      req.session.isLogin = true
+      req.session.role = val
+    }
+    res.json(result)
+  });
 })
 
 module.exports = router;
