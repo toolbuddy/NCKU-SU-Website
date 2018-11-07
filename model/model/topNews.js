@@ -14,7 +14,8 @@ module.exports = (sequelize, DataTypes) => {
 
   topNews.associate = function(models) {
     topNews.belongsToMany(models.tag, {through: models.articleTag, foreignKey: 'newsId'});
-    topNews.belongsToMany(models.account, {through: models.collection, foreignKey: 'topNewsId'});
+    topNews.belongsToMany(models.account, {through: models.collection, foreignKey: 'newsId'});
+    topNews.hasMany(models.file, {foreignKey: 'newsId'});
   }
 
   return topNews;

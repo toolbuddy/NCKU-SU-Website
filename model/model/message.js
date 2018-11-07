@@ -13,8 +13,9 @@ module.exports = (sequelize, DataTypes) => {
   });
 
   message.associate = function(models) {
-	message.belongsToMany(models.account, {through: models.collection, foreignKey: 'messageId'});
-	message.belongsToMany(models.tag, {through: models.articleTag, foreignKey: 'messageId'});
+    message.belongsToMany(models.account, {through: models.collection, foreignKey: 'messageId'});
+    message.belongsToMany(models.tag, {through: models.articleTag, foreignKey: 'messageId'});
+    message.hasMany(models.file, {foreignKey: 'messageId'});
   }
 
   return message;
