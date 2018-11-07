@@ -24,7 +24,7 @@ module.exports = function(sequelize, DataTypes) {
 	  defaultValue: false
     },
     iconPath: {
-      type: DataTypes.STRING(30)
+      type: DataTypes.STRING(30),
 	    defaultValue: false
     },
     token: {
