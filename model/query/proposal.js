@@ -13,7 +13,11 @@ function add(data) {
         studentId: data.studentId,
         title: data.title,
         content: data.content,
+<<<<<<< HEAD
+        threshold: data.threshold,
+=======
         needVoter: data.needVoter,
+>>>>>>> f1d204cf7906adf0a447d113fe59069e4ad87a41
         classId: data.classId
       })
       .then( res => {
@@ -59,7 +63,11 @@ function add(data) {
         return false;
       });
     }
+<<<<<<< HEAD
+  });
+=======
   }
+>>>>>>> f1d204cf7906adf0a447d113fe59069e4ad87a41
 }
 
 function del(id) {

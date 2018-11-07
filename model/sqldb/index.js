@@ -36,6 +36,5 @@ for (var i in db.models.length) {
     db.models[i].associate(db.models);
   }
 }
-
 module.exports = db;
 

@@ -21,6 +21,10 @@ module.exports = function(sequelize, DataTypes) {
     },
     verified: {
   	  type: DataTypes.BOOLEAN,
+	  defaultValue: false
+    },
+    iconPath: {
+      type: DataTypes.STRING(30)
 	    defaultValue: false
     },
     token: {
