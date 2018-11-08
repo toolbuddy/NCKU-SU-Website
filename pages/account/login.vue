@@ -8,30 +8,42 @@
       <br/>
       <button type="button" v-on:click="submit"> 登入 Login </button>
     </form>
+    <router-link v-bind:to="{path: '/account/forget'}"> 忘記密碼？ </router-link>
   </div>
 </template>
 
 <script>
-  import axios from '~/plugins/axios';
-  import qs from "qs";
-
   export default {
     methods: {
-      submit: function () {
-        // login code here...
-       const params = {
-            username: document.getElementById('username').value,
-            password: document.getElementById('pwd').value,
+      submit: async function () {
+        const user = document.getElementById('username').value
+        const pwd = document.getElementById('pwd').value
+        // check password value validation.
+        if (!this.valValidation(pwd)) {
+          console.log('value format error')
+          // TODO: error action.
+          return
         }
-        axios.post('/api/user', qs.stringify(params)
-        ).then(function(response){
-          console.log("success");
-          console.log(response);
-        }).catch(function(error){
-          console.log("false");
-          console.log(error);
-        })
-        
+        // check password length validation
+        if (!this.lengthValidation(pwd)) {
+          console.log('length error')
+          // TODO: error action.
+          return
+        }
+        // login code here...
+        const params = {
+          username: user,
+          password: pwd
+        }
+        await this.$store.dispatch('login', params)
+        this.$router.push('../')
+      },
+      valValidation: function (str) {
+        const regExp = /^[\d|a-zA-Z]+$/
+        return regExp.test(str)
+      },
+      lengthValidation: function (str) {
+        return str.length >= 8 && str.length <= 20
       }
     }
   }
