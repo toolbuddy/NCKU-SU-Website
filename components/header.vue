@@ -1,7 +1,7 @@
 <template>
   <header>
     <div class="bg">
-    <h2>成大學生會</h2>
+    <router-link tag="h2" to="/">成大學生會</router-link>
 
     <section class="float_right">
     <ul class="custom-ul-style">
@@ -22,15 +22,19 @@
 
 <script>
   export default {
-    name: 'custom-header'
+    name: 'custom-header',
+    methods: {
+      logout: async function () {
+        await this.$store.dispatch('logout')
+      }
+    }
   }
 </script>
 
 <style scoped>
   .bg {
-    height:53px;
-    width:100%;
-    position: fixed;
+    height: 53px;
+    width: 100vw;
     background-color: #FFFFFF;
     opacity: 0.5;
     z-index: 69;
@@ -45,6 +49,7 @@
     font-size: 23px;
     display: inline;
     text-decoration:none;
+    cursor: pointer;
   }
   ul {
     display: inline;

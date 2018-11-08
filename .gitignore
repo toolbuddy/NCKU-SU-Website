@@ -13,4 +13,11 @@ dist
 # Backpack build
 build
 
+# Uploads
+static/uploads
+
+# Test script
 test_script
+
+# Database config
+model/config/default.js

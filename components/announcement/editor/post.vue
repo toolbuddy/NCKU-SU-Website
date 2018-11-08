@@ -278,12 +278,12 @@
     border-style: solid;
     border-width: 10px 0 10px 15px;
     border-color: transparent transparent transparent #E0F7FA;
+    vertical-align: middle;
   }
   small {
     display: inline-block;
     box-sizing: border-box;
     font-size: 24px;
-    border-bottom: 1px solid #CCC;
     padding: 0.5em;
     width: 100%;
   }
@@ -294,7 +294,7 @@
     border-radius: 10px;
   }
   #title {
-    padding: 0.3em;
+    padding: 0.5em 1em;
     margin: 0.5em 0;
   }
   #content {
@@ -309,7 +309,7 @@
     grid-row-gap: 1em;
     padding: 1em;
     margin: 1em 0;
-    border: 1px solid #ddd;
+    border-left: 6px solid #ddd;
   }
   .float-left {
     float: left;
