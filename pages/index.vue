@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!-- <topnews v-bind:topnews="topnews" v-bind:max="topnews.length"></topnews> -->
+    <topnews v-bind:topnews="topnews" v-bind:max="topnews.length"></topnews>
     <div>
       <section class="grid grid-gap-6">
         <span class="grid">
@@ -12,10 +12,8 @@
             <h5>喚起年輕世代對政治的想望，<br>以及政治對世代青年的重視。</h5>
           </span>
         </span>
-        <!--
         <router-link v-for="(iter, index) of announcements" v-bind:key="index" v-bind:to="`/announcement/detail/${iter.id}`"><announcement-column v-bind:url="iter.image" v-bind:title="iter.title" v-bind:subtitle="iter.subtitle"> </announcement-column></router-link>
         <router-link v-if="topnews.length > 3" to="/announcement/" > <label class="green-color">顯示更多</label> </router-link>
-        -->
       </section>
     </div>
     <div class="gray-background">
@@ -40,16 +38,39 @@
 </template>
 
 <script>
+import axios from 'axios'
+import announcementColumn from '~/components/index/announcementColumn.vue'
+import Topnews from '~/components/index/topnews.vue'
 
 export default {
   components: {
+    announcementColumn,
+    Topnews
+  },
+  data () {
+    return {
+      announcements: [],
+      send: false,
+      sender: '',
+      subject: '',
+      content: '',
+      show: false,
+      topnews: []
+    }
   },
   async asyncData () {
-  },
-  head () {
-    return {
-      title: 'Developers'
+    try {
+      const result = await axios.get('/api/getAnnouncementsCurrent')
+      return {
+        topnews: result.data
+      }
+    } catch (error) {
+      console.log('Get announcement current failed')
+      console.log(error)
     }
+  },
+  mounted () {
+    this.announcements = this.topnews.slice(0, 3)
   }
 }
 </script>
